@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Database>
+    <EnglishText>
+        <Row Tag="LOC_MOD_BZ_READY_OR_NOT_NAME">
+            <Text>Ready or Not</Text>
+        </Row>
+        <Row Tag="LOC_MOD_BZ_READY_OR_NOT_DESCRIPTION">
+            <Text>better system buttons</Text>
+        </Row>
+    </EnglishText>
+</Database>
