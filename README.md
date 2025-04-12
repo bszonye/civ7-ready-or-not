@@ -1,2 +1,2 @@
-# civ7-ready-or-not
-Ready or Not mod for Civilization VII
+# Ready or Not 1.0.0
+better system buttons
