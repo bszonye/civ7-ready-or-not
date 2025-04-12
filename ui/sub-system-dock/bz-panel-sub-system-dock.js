@@ -86,10 +86,12 @@ export class bzSubSystemDock {
     afterAttach() {
         engine.on('CityInitialized', this.cityInitializedListener);
         engine.on('CultureNodeCompleted', this.onCivicCompleted, this);
+        engine.on('TraditionSlotsAdded', this.onPolicySlotsAdded, this);
     }
     beforeDetach() {
         engine.off('CityInitialized', this.cityInitializedListener);
         engine.off('CultureNodeCompleted', this.onCivicCompleted, this);
+        engine.off('TraditionSlotsAdded', this.onPolicySlotsAdded, this);
     }
     afterDetach() { }
     onAttributeChanged(_name, _prev, _next) { }
@@ -99,7 +101,12 @@ export class bzSubSystemDock {
         this.updateButtonFilters();
     }
     onCivicCompleted(data) {
-        // update policies after unlocking one
+        // update policies after completing a civic
+        if (data.player && data.player != GameContext.localPlayerID) return;
+        this.updateButtonFilters();
+    }
+    onPolicySlotsAdded(data) {
+        // update policies after unlocking a new policy slot
         if (data.player && data.player != GameContext.localPlayerID) return;
         this.updateButtonFilters();
     }
