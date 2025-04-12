@@ -36,8 +36,8 @@ export class bzSubSystemDock {
         this.component = component;
         component.bzComponent = this;
         this.Root = this.component.Root;
-        this.patchPrototypes(this.component);
         this.cityInitializedListener = this.onCityInitialized.bind(this);
+        this.patchPrototypes(this.component);
     }
     patchPrototypes(component) {
         const c_prototype = Object.getPrototypeOf(component);
