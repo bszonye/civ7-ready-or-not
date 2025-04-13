@@ -1,4 +1,5 @@
 const BZ_COLOR = {
+    bronze: "#e5d2ac",
     celebration: "#cfba6a",
     happiness: "#f5993d",
     ring: "#b5afa9",
@@ -52,17 +53,20 @@ const BZ_HEAD_STYLE = [
     background-image: url("fs://game/hud_civic_circle_dis.png");
 }
 .bz-gov .fxs-ring-meter__ring {
-    top: -0.0138888889rem;
-    left: 0.0555555556rem;
+    width: 4.8888888889rem;
+    height: 4.8888888889rem;
+    top: -0.0972222222rem;
+    left: -0.0277777778rem;
 }
 .ssb__element.bz-gov .fxs-ring-meter__ring-left,
 .ssb__element.bz-gov .fxs-ring-meter__ring-right {
     background-image: url("fs://game/hud_age_circle_rad.png");
-    filter: grayscale(1) brightness(2) fxs-color-tint(${BZ_COLOR.happiness});
+    filter: grayscale(1) brightness(2) fxs-color-tint(${BZ_COLOR.happiness}) opacity(0.8);
 }
 .ssb__element.bz-gov.bz-celebration .fxs-ring-meter__ring-left,
 .ssb__element.bz-gov.bz-celebration .fxs-ring-meter__ring-right {
     filter: grayscale(1) brightness(2) fxs-color-tint(${BZ_COLOR.celebration});
+    opacity: 1;
 }
 .bz-gov .ssb__button-icon {
     background-image: url("fs://game/sub_govt.png");
@@ -72,7 +76,7 @@ const BZ_HEAD_STYLE = [
     left: 0.1666666667rem;
 }
 .bz-gov.bz-celebration .ssb-button__turn-counter-content {
-    color: ${BZ_COLOR.celebration};
+    color: ${BZ_COLOR.bronze};
 }
 `,
 ];
