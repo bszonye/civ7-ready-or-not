@@ -31,10 +31,10 @@ const BZ_HEAD_STYLE = [
     height: 4.7222222222rem;
     background-position: 0.0277777778rem center;
     background-image: url("fs://game/hud_civic_circle_bk.png");
-    filter: saturate(0.5) contrast(0.8) fxs-color-tint(${BZ_COLOR.ring});
+    filter: saturate(0.5) brightness(1.25) fxs-color-tint(${BZ_COLOR.ring});
 }
 .bz-celebration .ssb__button-iconbg.bz-gov {
-    filter: saturate(0.5) contrast(0.8) fxs-color-tint(${BZ_COLOR.celebration});
+    filter: saturate(0.5) brightness(1.5) fxs-color-tint(${BZ_COLOR.celebration});
 }
 .ssb__button-iconbg--idle.bz-gov {
     opacity: 0;
@@ -52,6 +52,10 @@ const BZ_HEAD_STYLE = [
     opacity: 0;
     background-image: url("fs://game/hud_civic_circle_dis.png");
 }
+TODO.bz-gov .fxs-ring-meter__ring {
+    top: -0.0138888889rem;
+    left: 0.0555555556rem;
+}
 .bz-gov .fxs-ring-meter__ring {
     width: 4.8888888889rem;
     height: 4.8888888889rem;
@@ -61,7 +65,7 @@ const BZ_HEAD_STYLE = [
 .ssb__element.bz-gov .fxs-ring-meter__ring-left,
 .ssb__element.bz-gov .fxs-ring-meter__ring-right {
     background-image: url("fs://game/hud_age_circle_rad.png");
-    filter: grayscale(1) brightness(2) fxs-color-tint(${BZ_COLOR.happiness}) opacity(0.8);
+    filter: grayscale(1) brightness(1.5) fxs-color-tint(${BZ_COLOR.ring});
 }
 .ssb__element.bz-gov.bz-celebration .fxs-ring-meter__ring-left,
 .ssb__element.bz-gov.bz-celebration .fxs-ring-meter__ring-right {
@@ -76,7 +80,8 @@ const BZ_HEAD_STYLE = [
     left: 0.1666666667rem;
 }
 .bz-gov.bz-celebration .ssb-button__turn-counter-content {
-    color: ${BZ_COLOR.bronze};
+    color: ${BZ_COLOR.celebration};
+    font-weight: 900;
 }
 `,
 ];
