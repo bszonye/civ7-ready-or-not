@@ -12,13 +12,46 @@ const BZ_HEAD_STYLE = [
     height: 3rem;
     background-image: url('blp:ntf_assign_new_res_blk');
 }
+.bz-gov.bz-ready .ssb__button-icon {
+    top: -0.0833333333rem;
+    left: -0.0277777778rem;
+    width: 3rem;
+    height: 3rem;
+    background-image: url('blp:ntf_tradition_slot_unlocked_blk');
+}
 .ssb__element.bz-gov {
     width: 4.7222222222rem;
     height: 4.7222222222rem;
     margin: -0.5277777778rem;
     margin-top: -0.3888888889rem;
 }
-.ssb__element.bz-gov .fxs-ring-meter__ring {
+.ssb__button-iconbg.bz-gov {
+    width: 4.7222222222rem;
+    height: 4.7222222222rem;
+    background-position: 0.0277777778rem center;
+    background-image: url("fs://game/hud_civic_circle_bk.png");
+    filter: saturate(0.5) contrast(0.8) fxs-color-tint(${BZ_COLOR.ring});
+}
+.bz-celebration .ssb__button-iconbg.bz-gov {
+    filter: saturate(0.5) contrast(0.8) fxs-color-tint(${BZ_COLOR.celebration});
+}
+.ssb__button-iconbg--idle.bz-gov {
+    opacity: 0;
+    background-image: url("fs://game/hud_civic_circle_bk.png");
+}
+.ssb__button-iconbg--hover.bz-gov {
+    opacity: 0;
+    background-image: url("fs://game/hud_civic_circle_hov.png");
+}
+.ssb__button-iconbg--active.bz-gov {
+    opacity: 0;
+    background-image: url("fs://game/hud_civic_circle_prs.png");
+}
+.ssb__button-iconbg--disabled.bz-gov {
+    opacity: 0;
+    background-image: url("fs://game/hud_civic_circle_dis.png");
+}
+.bz-gov .fxs-ring-meter__ring {
     top: -0.0138888889rem;
     left: 0.0555555556rem;
 }
@@ -31,46 +64,15 @@ const BZ_HEAD_STYLE = [
 .ssb__element.bz-gov.bz-celebration .fxs-ring-meter__ring-right {
     filter: grayscale(1) brightness(2) fxs-color-tint(${BZ_COLOR.celebration});
 }
-.ssb__button-iconbg.bz-gov {
-    width: 4.7222222222rem;
-    height: 4.7222222222rem;
-    background-position: 0.0277777778rem center;
-    background-image: url("fs://game/hud_civic_circle_bk.png");
-    filter: saturate(0.5) contrast(0.8) fxs-color-tint(${BZ_COLOR.ring});
-}
-
-.ssb__button-iconbg--idle.bz-gov {
-    opacity: 0;
-    background-image: url("fs://game/hud_civic_circle_bk.png");
-}
-
-.ssb__button-iconbg--hover.bz-gov {
-    opacity: 0;
-    background-image: url("fs://game/hud_civic_circle_hov.png");
-}
-
-.ssb__button-iconbg--active.bz-gov {
-    opacity: 0;
-    background-image: url("fs://game/hud_civic_circle_prs.png");
-}
-
-.ssb__button-iconbg--disabled.bz-gov {
-    opacity: 0;
-    background-image: url("fs://game/hud_civic_circle_dis.png");
-}
 .bz-gov .ssb__button-icon {
     background-image: url("fs://game/sub_govt.png");
 }
-.bz-gov.bz-ready .ssb__button-icon {
-    top: -0.0833333333rem;
-    left: -0.0277777778rem;
-    width: 3rem;
-    height: 3rem;
-    background-image: url('blp:ntf_tradition_slot_unlocked_blk');
-}
 .bz-gov .ssb-button__turn-counter {
-    top: 3.6944444444rem;
+    top: 3.7222222222rem;
     left: 0.1666666667rem;
+}
+.bz-gov.bz-celebration .ssb-button__turn-counter-content {
+    color: ${BZ_COLOR.celebration};
 }
 `,
 ];
@@ -131,7 +133,7 @@ export class bzSubSystemDock {
             // focusedAudio: "data-audio-focus-small"
             tooltip: "LOC_UI_VIEW_TRADITIONS",
             callback: this.component.onOpenPolicies.bind(this.component),
-            class: ["ring-culture", "tut-traditions"],
+            class: ["ring-gov", "tut-traditions"],
             ringClass: "ssb__texture-ring",
             modifierClass: 'bz-gov',
             audio: "government",
@@ -152,7 +154,7 @@ export class bzSubSystemDock {
         turnCounter.classList.add("ssb-button__turn-counter");
         turnCounter.setAttribute("data-tut-highlight", "founderHighlight");
         const turnCounterContent = document.createElement("div");
-        turnCounterContent.classList.add("ssb-button__turn-counter-content", "font-title-2xs");
+        turnCounterContent.classList.add("ssb-button__turn-counter-content", "font-title-xs");
         turnCounter.appendChild(turnCounterContent);
         const ringAndButton = {
             button: this.component.createButton(buttonData),
@@ -179,27 +181,44 @@ export class bzSubSystemDock {
             this.resourcesButton.classList.toggle('bz-ready', isReady);
         }
     }
+    getCurrentGoldenAge(playerID) {
+        const players = ReflectionArchives.getPlayers().getChildren();
+        const player = players?.find(item => item.id.owner == playerID)?.getChildren();
+        const happiness = player?.find(item => item.typeStr == "PlayerHappiness");
+        for (let i = 0; i < (happiness?.memberCount ?? 0); ++i) {
+            if (happiness.getMember(i).name != 'm_eCurrentGoldenAge') continue;
+            const index = JSON.parse(happiness.getMemberValueString(i));
+            return GameInfo.GoldenAges[index];
+        }
+        return undefined;
+    }
     updateGovButton() {
         if (!this.govButton) return;  // not ready yet
         const player = Players.get(GameContext.localPlayerID);
         if (player == null) return; // autoplaying
-        const isReady = player.Culture?.canSwapNormalTraditions ?? false;
         const isCelebration = player.Happiness?.isInGoldenAge() ?? false;
-        this.govRing.classList.toggle('bz-ready', isReady);
         this.govRing.classList.toggle('bz-celebration', isCelebration);
+        const isReady = player.Culture?.canSwapNormalTraditions ?? false;
+        this.govButton.classList.toggle('bz-ready', isReady);
         let turnsLeft = 1;
         let progress = 0;
         if (isCelebration) {
             const duration = player.Happiness.getGoldenAgeDuration();
             turnsLeft = player.Happiness.getGoldenAgeTurnsLeft();
             progress = (duration - turnsLeft) / duration;
-            this.govButton.setAttribute("data-tooltip-content", Locale.compose("LOC_SUB_SYSTEM_TRADITIONS_TURNS_UNTIL_CELEBRATION_END", turnsLeft));
+            const tooltip = [];
+            tooltip.push(Locale.compose("LOC_SUB_SYSTEM_TRADITIONS_TURNS_UNTIL_CELEBRATION_END", turnsLeft));
+            const goldenAge = this.getCurrentGoldenAge(player.id);
+            if (goldenAge) tooltip.push(' ',
+                '[b]' + Locale.compose(goldenAge.Name) + '[/b]',
+                Locale.compose(goldenAge.Description, duration),
+            );
+            this.govButton.setAttribute("data-tooltip-content", tooltip.join('[n]'));
         }
         else {
             const happinessPerTurn = player.Stats.getNetYield(YieldTypes.YIELD_HAPPINESS) ?? -1;
             const nextGoldenAgeThreshold = player.Happiness.nextGoldenAgeThreshold;
             const happinessTotal = Math.ceil(player.Stats.getLifetimeYield(YieldTypes.YIELD_HAPPINESS)) ?? -1;
-            console.warn(`TRIX UPDATE-GOV ${nextGoldenAgeThreshold} ${happinessTotal}`);
             if (happinessPerTurn <= 0 || happinessTotal < 0) {
                 progress = turnsLeft = 0;
             } else {
@@ -208,9 +227,6 @@ export class bzSubSystemDock {
             }
             this.govButton.setAttribute("data-tooltip-content", Locale.compose("LOC_SUB_SYSTEM_TRADITIONS_TURNS_UNTIL_CELEBRATION_START", turnsLeft));
         }
-        const govIcon = "url('blp:ntf_tradition_slot_unlocked_blk')";
-        console.warn(`TRIX UPDATE-GOV ${govIcon} ${turnsLeft} ${progress}`);
-        this.component.updateButtonIcon(this.govButton, govIcon);
         this.component.updateTurnCounter(this.govTurnCounter, turnsLeft.toString());
         this.govRing.setAttribute('value', (progress * 100).toString());
     }

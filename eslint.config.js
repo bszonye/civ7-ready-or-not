@@ -30,6 +30,7 @@ export default [
                 MapConstructibles: "readonly",
                 MapUnits: "readonly",
                 Players: "readonly",
+                ReflectionArchives: "readonly",
                 UI: "readonly",
                 WorldAnchors: "readonly",
                 YieldTypes: "readonly",
