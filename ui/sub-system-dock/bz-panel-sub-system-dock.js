@@ -127,7 +127,7 @@ export class bzSubSystemDock {
         this.buttonContainer = this.component.buttonContainer;
         this.policiesButton = this.component.policiesButton;
         this.resourcesButton = this.component.resourcesButton;
-        const govElements = this.replaceRingButton(this.policiesButton, {
+        const govElements = this.createRingButton({
             // tooltip: "LOC_UI_VIEW_TRADITIONS",
             // callback: this.component.onOpenPolicies.bind(this.component),
             // class: ["ring-culture", "tut-traditions"],
@@ -146,6 +146,9 @@ export class bzSubSystemDock {
         this.govButton = govElements.button;
         this.govRing = govElements.ring;
         this.govTurnCounter = govElements.turnCounter;
+        this.buttonContainer.replaceChild(this.govRing, this.component.policiesButton);
+        // leave the new button disconnected to disable conflicting mods
+        // this.component.policiesButton = this.govRing;
         this.updateGovButton();
         this.updateResourcesButton();
     }
@@ -153,7 +156,7 @@ export class bzSubSystemDock {
         this.updateGovButton();
         this.updateResourcesButton();
     }
-    replaceRingButton(button, buttonData) {
+    createRingButton(buttonData) {
         const turnCounter = document.createElement("div");
         turnCounter.classList.add("ssb-button__turn-counter");
         turnCounter.setAttribute("data-tut-highlight", "founderHighlight");
@@ -165,7 +168,6 @@ export class bzSubSystemDock {
             ring: this.component.createRing(buttonData),
             turnCounter
         };
-        this.buttonContainer.replaceChild(ringAndButton.ring, button);
         ringAndButton.ring.appendChild(ringAndButton.button);
         ringAndButton.ring.appendChild(ringAndButton.turnCounter);
         if (buttonData.ringClass) {
