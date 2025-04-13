@@ -23,7 +23,7 @@ const BZ_HEAD_STYLE = [
 .ssb__element.bz-gov {
     width: 4.7222222222rem;
     height: 4.7222222222rem;
-    margin: -0.5277777778rem;
+    margin: -0.7222222222rem;
     margin-top: -0.3888888889rem;
 }
 .ssb__button-iconbg.bz-gov {
