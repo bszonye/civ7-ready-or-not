@@ -23,7 +23,7 @@ const BZ_HEAD_STYLE = [
 .ssb__element.bz-gov {
     width: 4.7222222222rem;
     height: 4.7222222222rem;
-    margin: -0.7222222222rem;
+    margin: -0.6388888889rem;
     margin-top: -0.3888888889rem;
 }
 .ssb__button-iconbg.bz-gov {
@@ -80,7 +80,7 @@ TODO.bz-gov .fxs-ring-meter__ring {
     left: 0.1666666667rem;
 }
 .bz-gov.bz-celebration .ssb-button__turn-counter-content {
-    color: ${BZ_COLOR.celebration};
+    color: ${BZ_COLOR.bronze};
     font-weight: 900;
 }
 `,
