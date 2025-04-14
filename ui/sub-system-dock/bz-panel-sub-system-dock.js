@@ -174,7 +174,7 @@ export class bzSubSystemDock {
         this.govRing.classList.toggle('bz-celebration', isCelebration);
         const isReady = player.Culture?.canSwapNormalTraditions ?? false;
         this.govButton.classList.toggle('bz-ready', isReady);
-        let turnsLeft = 1;
+        let turnsLeft = 0;
         let progress = 0;
         const tooltip = [];
         if (isCelebration) {
