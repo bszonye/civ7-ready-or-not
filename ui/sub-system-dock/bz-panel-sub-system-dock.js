@@ -235,13 +235,11 @@ export class bzSubSystemDock {
         // update policies after completing a civic
         if (data.player && data.player != GameContext.localPlayerID) return;
         this.updateGovButton();
-        this.updateResourcesButton();
     }
     onPolicySlotsAdded(data) {
         // update policies after unlocking a new policy slot
         if (data.player && data.player != GameContext.localPlayerID) return;
         this.updateGovButton();
-        this.updateResourcesButton();
     }
 }
 Controls.decorate('panel-sub-system-dock', (component) => new bzSubSystemDock(component));
