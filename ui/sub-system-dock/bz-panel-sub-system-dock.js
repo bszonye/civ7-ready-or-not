@@ -197,10 +197,10 @@ export class bzSubSystemDock {
             progress = (duration - turnsLeft) / duration;
             tooltip.push(Locale.compose("LOC_SUB_SYSTEM_TRADITIONS_TURNS_UNTIL_CELEBRATION_END", turnsLeft));
             const goldenAge = this.getCurrentGoldenAge(player.id);
-            if (goldenAge) tooltip.push(' ',
-                Locale.compose(goldenAge.Name),
-                Locale.compose(goldenAge.Description, duration),
-            );
+            if (goldenAge) {
+                const description = Locale.compose(goldenAge.Description, duration);
+                tooltip.push(`[b]${description}[/b]`);
+            }
             this.govButton.setAttribute("data-tooltip-content", tooltip.join('[n]'));
         }
         else {
@@ -215,7 +215,7 @@ export class bzSubSystemDock {
             }
             tooltip.push(Locale.compose("LOC_SUB_SYSTEM_TRADITIONS_TURNS_UNTIL_CELEBRATION_START", turnsLeft));
         }
-        if (isReady) tooltip.push(" ", Locale.compose("LOC_UI_POLICIES_CAN_SWAP"));
+        if (isReady) tooltip.push(' ', Locale.compose("LOC_UI_POLICIES_CAN_SWAP"));
         this.govButton.setAttribute("data-tooltip-content", tooltip.join('[n]'));
         this.component.updateTurnCounter(this.govTurnCounter, turnsLeft.toString());
         this.govRing.setAttribute('value', (progress * 100).toString());
