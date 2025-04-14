@@ -37,7 +37,6 @@ const BZ_HEAD_STYLE = [
 .ssb__element.bz-gov.bz-celebration .fxs-ring-meter__ring-left,
 .ssb__element.bz-gov.bz-celebration .fxs-ring-meter__ring-right {
     filter: grayscale(1) brightness(2) fxs-color-tint(${BZ_COLOR.celebration});
-    opacity: 1;
 }
 .bz-gov .ssb__button-icon {
     background-image: url("fs://game/sub_govt.png");
