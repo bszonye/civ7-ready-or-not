@@ -4,26 +4,21 @@ const BZ_COLOR = {
 };
 const BZ_HEAD_STYLE = [
 `
-.resources.bz-ready .ssb__button-icon {
+.bz-ready .ssb__button-icon {
     top: -0.1111111111rem;
     left: -0.0138888889rem;
     width: 3rem;
     height: 3rem;
+}
+.resources.bz-ready .ssb__button-icon {
     background-image: url('blp:ntf_assign_new_res_blk');
 }
 .bz-gov.bz-ready .ssb__button-icon {
-    top: -0.1111111111rem;
-    left: -0.0138888889rem;
-    width: 3rem;
-    height: 3rem;
     background-image: url('blp:ntf_tradition_slot_unlocked_blk');
 }
 .ssb__element.bz-gov {
     margin: 0.3333333333rem;
     margin-top: 0.5555555556rem;
-}
-.ssb__button-iconbg.bz-gov {
-    z-index: 2;
 }
 .bz-celebration .ssb__button-iconbg.bz-gov {
     filter: brightness(2) fxs-color-tint(${BZ_COLOR.celebration});
@@ -33,7 +28,6 @@ const BZ_HEAD_STYLE = [
     height: 4.8888888889rem;
     top: -1.0277777778rem;
     left: -0.9166666667rem;
-    z-index: 3;
 }
 .ssb__element.bz-gov .fxs-ring-meter__ring-left,
 .ssb__element.bz-gov .fxs-ring-meter__ring-right {
@@ -47,25 +41,22 @@ const BZ_HEAD_STYLE = [
 }
 .bz-gov .ssb__button-icon {
     background-image: url("fs://game/sub_govt.png");
-    z-index: 4;
 }
 .bz-gov .ssb-button__turn-counter {
-    pointer-events: auto;
-    position: absolute;
     top: 2.6111111111rem;
     left: 0.7777777778rem;
     height: 1.3888888889rem;
     width: 1.4444444444rem;
     background-color: #0008;
     border-radius: 50% / 0 0 0.1666666667rem 0.1666666667rem;
-    z-index: 1;
+    z-index: -1;
 }
 .bz-gov .ssb-button__turn-counter-content {
     margin-top: 0.1666666667rem;
 }
 .bz-gov.bz-celebration .ssb-button__turn-counter-content {
-    font-weight: 900;
     color: ${BZ_COLOR.celebration};
+    font-weight: 900;
 }
 `,
 ];
