@@ -173,12 +173,16 @@ export class bzSubSystemDock {
         const players = ReflectionArchives.getPlayers().getChildren();
         const player = players?.find(item => item.id.owner == playerID)?.getChildren();
         const happiness = player?.find(item => item.typeStr == "PlayerHappiness");
+        let info = {};
         for (let i = 0; i < (happiness?.memberCount ?? 0); ++i) {
-            if (happiness.getMember(i).name != 'm_eCurrentGoldenAge') continue;
-            const index = JSON.parse(happiness.getMemberValueString(i));
-            return GameInfo.GoldenAges[index];
+            const field = happiness.getMember(i).name;
+            const value = happiness.getMemberValueString(i);
+            info[field] = value;
         }
-        return undefined;
+        if (info.m_bIsGoldenAgeChoiceRequired == "true") {
+            return { Description: "LOC_NOTIFICATION_CHOOSE_GOLDEN_AGE_MESSAGE" };
+        }
+        return GameInfo.GoldenAges[parseInt(info.m_eCurrentGoldenAge)];
     }
     updateGovButton() {
         if (!this.govButton) return;  // not ready yet
