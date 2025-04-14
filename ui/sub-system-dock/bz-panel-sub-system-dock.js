@@ -166,7 +166,7 @@ export class bzSubSystemDock {
         if (isCelebration) {
             const duration = player.Happiness.getGoldenAgeDuration();
             turnsLeft = player.Happiness.getGoldenAgeTurnsLeft();
-            progress = (duration - turnsLeft) / duration;
+            progress = turnsLeft / duration;
             tooltip.push(Locale.compose("LOC_SUB_SYSTEM_TRADITIONS_TURNS_UNTIL_CELEBRATION_END", turnsLeft));
             const goldenAge = getCurrentGoldenAge(player.id);
             if (goldenAge) {
