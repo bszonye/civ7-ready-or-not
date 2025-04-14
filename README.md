@@ -1,9 +1,10 @@
-# Ready or Not 1.0.1
+# Ready or Not 1.1.0
 better system buttons
 
 are your social policies ready for a change?
 is your resource allocation unlocked?
 
-Ready or Not switches the system buttons to full-color icons when their
-screens are unlocked.  it also turns the Social Policies button to gold
-during celebrations.
+Ready or Not shows when social policies and resources are unlocked, by
+changing the Government and Resource Allocation buttons to full-color
+icons.  it also shows celebration progress on the Government button and
+celebration bonus in its tooltip.
