@@ -50,7 +50,6 @@ class bzScreenPolicies {
             getCurrentGoldenAge(this.localPlayer.id)?.GoldenAgeType ?? null :
             null;
         const icon = this.overviewWindow.querySelector(".policies__overview-happiness-meter-image");
-        console.warn(`TRIX GTYPE=${gtype} ICON=${icon}`);
         icon.style.backgroundImage = gtype ?
             UI.getIconCSS(gtype) :
             'url("celeb_happiness_icon")';
