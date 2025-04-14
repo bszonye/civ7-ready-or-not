@@ -1,3 +1,4 @@
+import { getCurrentGoldenAge } from '/bz-ready-or-not/ui/policies/bz-screen-policies.js';
 const BZ_COLOR = {
     celebration: "#cfba6a",
     ring: "#b5afa9",
@@ -151,21 +152,6 @@ export class bzSubSystemDock {
         ringAndButton.ring.classList.add("ssb__element");
         return ringAndButton;
     }
-    getCurrentGoldenAge(playerID) {
-        const players = ReflectionArchives.getPlayers().getChildren();
-        const player = players?.find(item => item.id.owner == playerID)?.getChildren();
-        const happiness = player?.find(item => item.typeStr == "PlayerHappiness");
-        let info = {};
-        for (let i = 0; i < (happiness?.memberCount ?? 0); ++i) {
-            const field = happiness.getMember(i).name;
-            const value = happiness.getMemberValueString(i);
-            info[field] = value;
-        }
-        if (info.m_bIsGoldenAgeChoiceRequired == "true") {
-            return { Description: "LOC_NOTIFICATION_CHOOSE_GOLDEN_AGE_MESSAGE" };
-        }
-        return GameInfo.GoldenAges[parseInt(info.m_eCurrentGoldenAge)];
-    }
     updateGovButton() {
         if (!this.govButton) return;  // not ready yet
         const player = Players.get(GameContext.localPlayerID);
@@ -182,7 +168,7 @@ export class bzSubSystemDock {
             turnsLeft = player.Happiness.getGoldenAgeTurnsLeft();
             progress = (duration - turnsLeft) / duration;
             tooltip.push(Locale.compose("LOC_SUB_SYSTEM_TRADITIONS_TURNS_UNTIL_CELEBRATION_END", turnsLeft));
-            const goldenAge = this.getCurrentGoldenAge(player.id);
+            const goldenAge = getCurrentGoldenAge(player.id);
             if (goldenAge) {
                 const description = Locale.compose(goldenAge.Description, duration);
                 tooltip.push(`[b]${description}[/b]`);
