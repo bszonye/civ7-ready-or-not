@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Mod id="bz-ready-or-not" version="10100"
+<Mod id="bz-ready-or-not" version="10101"
     xmlns="ModInfo">
     <Properties>
         <Name>LOC_MOD_BZ_READY_OR_NOT_NAME</Name>
-        <Version>1.1.0</Version>
+        <Version>1.1.1</Version>
         <Description>LOC_MOD_BZ_READY_OR_NOT_DESCRIPTION</Description>
         <Authors>beezany</Authors>
         <URL>https://forums.civfanatics.com/resources/ready-or-not.32175/</URL>
@@ -25,6 +25,7 @@
             </Properties>
             <Actions>
                 <UIScripts>
+                    <Item>ui/policies/bz-screen-policies.js</Item>
                     <Item>ui/sub-system-dock/bz-panel-sub-system-dock.js</Item>
                 </UIScripts>
             </Actions>
