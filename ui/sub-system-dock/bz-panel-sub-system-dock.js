@@ -53,9 +53,9 @@ const BZ_HEAD_STYLE = [
     pointer-events: auto;
     position: absolute;
     top: 2.6111111111rem;
-    left: 0.8888888888rem;
+    left: 0.7777777778rem;
     height: 1.3888888889rem;
-    width: 1.2222222222rem;
+    width: 1.4444444444rem;
     background-color: #0008;
     border-radius: 50% / 0 0 0.1666666667rem 0.1666666667rem;
     z-index: 1;
@@ -143,7 +143,7 @@ export class bzSubSystemDock {
         turnCounter.classList.add("ssb-button__turn-counter");
         turnCounter.setAttribute("data-tut-highlight", "founderHighlight");
         const turnCounterContent = document.createElement("div");
-        turnCounterContent.classList.add("ssb-button__turn-counter-content", "font-title-xs");
+        turnCounterContent.classList.add("ssb-button__turn-counter-content", "font-title-sm");
         turnCounter.appendChild(turnCounterContent);
         const ringAndButton = {
             button: this.component.createButton(buttonData),
