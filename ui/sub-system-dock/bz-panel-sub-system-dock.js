@@ -76,7 +76,6 @@ export class bzSubSystemDock {
         this.govButton = null;
         this.govRing = null;
         this.govTurnCounter = null;
-        this.celebrationTurnCounter = null;
         this.cityInitializedListener = this.onCityInitialized.bind(this);
         this.patchPrototypes(this.component);
     }
