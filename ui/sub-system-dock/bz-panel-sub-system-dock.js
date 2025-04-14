@@ -151,13 +151,6 @@ export class bzSubSystemDock {
         ringAndButton.ring.classList.add("ssb__element");
         return ringAndButton;
     }
-    updateResourcesButton() {
-        const player = Players.get(GameContext.localPlayerID);
-        if (this.resourcesButton) {
-            const isReady = !(player.Resources?.isRessourceAssignmentLocked() ?? true);
-            this.resourcesButton.classList.toggle('bz-ready', isReady);
-        }
-    }
     getCurrentGoldenAge(playerID) {
         const players = ReflectionArchives.getPlayers().getChildren();
         const player = players?.find(item => item.id.owner == playerID)?.getChildren();
@@ -212,6 +205,13 @@ export class bzSubSystemDock {
         this.govButton.setAttribute("data-tooltip-content", tooltip.join('[n]'));
         this.component.updateTurnCounter(this.govTurnCounter, turnsLeft.toString());
         this.govRing.setAttribute('value', (progress * 100).toString());
+    }
+    updateResourcesButton() {
+        const player = Players.get(GameContext.localPlayerID);
+        if (this.resourcesButton) {
+            const isReady = !(player.Resources?.isRessourceAssignmentLocked() ?? true);
+            this.resourcesButton.classList.toggle('bz-ready', isReady);
+        }
     }
     beforeAttach() { }
     afterAttach() {
