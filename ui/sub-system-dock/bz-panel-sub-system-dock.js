@@ -12,7 +12,7 @@ const BZ_HEAD_STYLE = [
     height: 3rem;
 }
 .resources.bz-ready .ssb__button-icon {
-    background-image: url('blp:ntf_assign_new_res_blk');
+    background-image: url('blp:ntf_discover_resource_blk');
 }
 .bz-gov.bz-ready .ssb__button-icon {
     background-image: url('blp:ntf_tradition_slot_unlocked_blk');
@@ -27,7 +27,7 @@ const BZ_HEAD_STYLE = [
 .bz-gov .fxs-ring-meter__ring {
     width: 4.8888888889rem;
     height: 4.8888888889rem;
-    top: -1.0277777778rem;
+    top: -1.0555555556rem;
     left: -0.9166666667rem;
 }
 .ssb__element.bz-gov .fxs-ring-meter__ring-left,

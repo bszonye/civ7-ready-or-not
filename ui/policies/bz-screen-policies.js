@@ -3,7 +3,7 @@ const BZ_HEAD_STYLE = [
 .policies__overview-happiness-meter-circle  {
     position: relative;
     top: 0.0277777778rem;
-    left: -0.0555555556rem;
+    left: -0.0833333333rem;
 }
 .policies__overview-happiness-meter-image {
     position: relative;
