@@ -87,11 +87,11 @@ export class PolicyChooserItem extends ChooserItem {
         const cardTextContainer = document.createElement("div");
         cardTextContainer.classList.value = "w-full flex flex-col items-center justify-center";
         const cardTitle = document.createElement("div");
-        cardTitle.classList.add("w-full", node.iconType ? "pl-3" : "pl-2", "pr-2", "pt-2", "text-center", "pb-1", "font-title-base", "tracking-100", "z-1");
+        cardTitle.classList.add("w-full", (node.iconType ? "pl-3" : "pl-2"), "pr-2", "pt-2", "text-center", "pb-1", "font-title-base", "tracking-100", "z-1");
         cardTitle.setAttribute("data-l10n-id", node.name);
         cardTextContainer.appendChild(cardTitle);
         const cardDesc = document.createElement("div");
-        cardDesc.classList.add("policy-card-body-text", "w-full", node.iconType ? "pl-6" : "pl-3", "pr-2", "pb-2", "text-accent-4", "font-body-sm", "z-1");
+        cardDesc.classList.add("policy-card-body-text", (node.iconType ? "pl-6" : "pl-3"), "pr-2", "pb-2", "text-accent-4", "font-body-sm", "z-1");
         cardDesc.setAttribute("data-l10n-id", node.description);
         cardTextContainer.appendChild(cardDesc);
         chooserItem.appendChild(cardTextContainer);

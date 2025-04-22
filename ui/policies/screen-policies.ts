@@ -19,11 +19,6 @@ import { Audio } from '/core/ui/audio-base/audio-support.js';
 import { Focus } from '/core/ui/input/focus-support.js';
 import { Layout } from '/core/ui/utilities/utilities-layout.js';
 
-interface CrisisMarker {
-	locStr: string;
-	timelinePlacement: number;
-}
-
 export enum PolicyTabPlacement {
 	NONE,
 	OVERVIEW,
@@ -52,15 +47,16 @@ const getPolicyTabItems = (numOpenNormalSlots: number, numOpenCrisisSlots: numbe
 		iconText: numOpenCrisisSlots.toString(),
 		className: "flex-row-reverse"
 	} as const;
-	if (GameInfo.Ages.lookup(Game.age)!.AgeType == "AGE_MODERN") {
+
+	if (Game.AgeProgressManager.isFinalAge || !Game.CrisisManager.isCrisisEnabled) {
 		return [overviewTab, normalTab] as const satisfies ReadonlyArray<TabItem>;
 	}
 	else {
 		return [overviewTab, normalTab, crisisTab] as const satisfies ReadonlyArray<TabItem>;
 	}
 }
-class ScreenPolicies extends Panel {
 
+export class ScreenPolicies extends Panel {
 	private confirmButtonListener = this.onConfirm.bind(this);
 	private navigateInputListener = this.onNavigateInput.bind(this);
 	private engineInputListener = this.onEngineInput.bind(this);
@@ -97,10 +93,31 @@ class ScreenPolicies extends Panel {
 
 	private initialSetupDone: boolean = false;
 
-	private crisisEventMarkers: CrisisMarker[] = [
-		{ locStr: "LOC_UI_POLICIES_CRISIS_BEGINS", timelinePlacement: Game.CrisisManager.getCrisisStageTriggerPercent(0) / 100 },
-		{ locStr: "LOC_UI_POLICIES_CRISIS_INTENSIFIES", timelinePlacement: Game.CrisisManager.getCrisisStageTriggerPercent(1) / 100 },
-		{ locStr: "LOC_UI_POLICIES_CRISIS_CULMINATES", timelinePlacement: Game.CrisisManager.getCrisisStageTriggerPercent(2) / 100 }
+	private crisisEventMarkers = [
+		{
+			progressLabelStr: "LOC_UI_POLICIES_TURNS_UNTIL_CRISIS_BEGINS",
+			progressLabelStrRange: "LOC_UI_POLICIES_TURNS_UNTIL_CRISIS_BEGINS_RANGE",
+			locStr: "LOC_UI_POLICIES_CRISIS_BEGINS",
+			timelinePlacement: Game.CrisisManager.getCrisisStageTriggerPercent(0) / 100
+		},
+		{
+			progressLabelStr: "LOC_UI_POLICIES_TURNS_UNTIL_CRISIS_INTENSIFIES",
+			progressLabelStrRange: "LOC_UI_POLICIES_TURNS_UNTIL_CRISIS_INTENSIFIES_RANGE",
+			locStr: "LOC_UI_POLICIES_CRISIS_INTENSIFIES",
+			timelinePlacement: Game.CrisisManager.getCrisisStageTriggerPercent(1) / 100
+		},
+		{
+			progressLabelStr: "LOC_UI_POLICIES_TURNS_UNTIL_CRISIS_CULMINATES",
+			progressLabelStrRange: "LOC_UI_POLICIES_TURNS_UNTIL_CRISIS_CULMINATES_RANGE",
+			locStr: "LOC_UI_POLICIES_CRISIS_CULMINATES",
+			timelinePlacement: Game.CrisisManager.getCrisisStageTriggerPercent(2) / 100
+		},
+		{
+			progressLabelStr: "LOC_UI_POLICIES_TURNS_UNTIL_CRISIS_ENDS",
+			progressLabelStrRange: "LOC_UI_POLICIES_TURNS_UNTIL_CRISIS_ENDS_RANGE",
+			locStr: "LOC_UI_POLICIES_CRISIS_ENDS",
+			timelinePlacement: Game.CrisisManager.getCrisisStageTriggerPercent(3) / 100
+		}
 	]
 	onInitialize(): void {
 		this.confirmButton = MustGetElement("fxs-hero-button", this.Root);
@@ -126,6 +143,10 @@ class ScreenPolicies extends Panel {
 
 		const closeButton = MustGetElement("fxs-close-button", this.Root);
 		closeButton.addEventListener('action-activate', () => {
+			this.close();
+		});
+
+		Panel.addEngineCloseEvent(this.Root.typeName, () => {
 			this.close();
 		});
 
@@ -174,6 +195,8 @@ class ScreenPolicies extends Panel {
 	}
 
 	onDetach() {
+		Panel.removeEngineCloseEvent(this.Root.typeName);
+
 		this.Root.removeEventListener(InputEngineEventName, this.engineInputListener);
 		this.Root.removeEventListener(NavigateInputEventName, this.navigateInputListener);
 		this.confirmButton.removeEventListener('action-activate', this.confirmButtonListener);
@@ -547,10 +570,45 @@ class ScreenPolicies extends Panel {
 		const innerProgressBar = MustGetElement(".policies__crisis-progress-bar-inner", this.crisisWindow);
 		const markerContainer = MustGetElement(".policies__crisis-marker-container", this.crisisWindow);
 
-		const currentAgeProgression: number = Game.AgeProgressManager.getCurrentAgeProgressionPoints() + 1;
-		const maxAgeProgression: number = Game.AgeProgressManager.getMaxAgeProgressionPoints();
-		const ageProgressionPercent: number = currentAgeProgression / maxAgeProgression;
+		const currentAgeProgression = Game.AgeProgressManager.getCurrentAgeProgressionPoints() + 1;
+		const maxAgeProgression = Game.AgeProgressManager.getMaxAgeProgressionPoints();
+		const ageProgressionPercent = currentAgeProgression / maxAgeProgression;
 		innerProgressBar.style.width = `${utils.clamp(ageProgressionPercent * 100, 0, 100)}%`;
+
+		const crisisProgressText = MustGetElement(".policies__crisis-progress-text", this.crisisWindow);
+		for (let i = 0; i < this.crisisEventMarkers.length; i++) {
+			if (ageProgressionPercent < this.crisisEventMarkers[i].timelinePlacement) {
+				break;
+			}
+		}
+
+		const crisisStage = Game.CrisisManager.getCurrentCrisisStage();
+		const nextCrisisStage = Math.max(0, crisisStage + 1);
+		let showCrisisText = false;
+		if (Game.CrisisManager.isCrisisEnabled && nextCrisisStage < this.crisisEventMarkers.length) {
+			const { progressLabelStr, progressLabelStrRange } = this.crisisEventMarkers[nextCrisisStage];
+
+			const minTurns = Game.CrisisManager.getMinimumTurnsRemainingInCurrentCrisis(crisisStage);
+			const maxTurns = Game.CrisisManager.getMaximumTurnsRemainingInCurrentCrisis(crisisStage);
+			if (minTurns != -1) {
+
+				// If min is invalid or higher than max, collapse to a single value
+				if (minTurns < 1) {
+					crisisProgressText.innerHTML = Locale.stylize(progressLabelStr, maxTurns);
+					showCrisisText = true;
+				} else if (maxTurns < minTurns) {
+					crisisProgressText.innerHTML = Locale.stylize(progressLabelStr, minTurns);
+					showCrisisText = true;
+				}
+				// Otherwise show a range
+				else {
+					crisisProgressText.innerHTML = Locale.stylize(progressLabelStrRange, minTurns, maxTurns);
+					showCrisisText = true;
+				}
+			}
+		}
+
+		crisisProgressText.classList.toggle("hidden", !showCrisisText);
 
 		for (const crisisMarker of this.crisisEventMarkers) {
 			const marker = document.createElement("div");
@@ -1106,3 +1164,9 @@ Controls.define('screen-policies', {
 	content: ['fs://game/base-standard/ui/policies/screen-policies.html'],
 	tabIndex: -1
 });
+
+declare global {
+	interface HTMLElementTagNameMap {
+		"screen-policies": ComponentRoot<ScreenPolicies>,
+	}
+}

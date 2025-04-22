@@ -47,7 +47,8 @@
 	margin-right: 0;
 }
 
-.ssb__element.agetimer {
+.ssb__element.agetimer,
+.ssb__element.ageextended {
 	width: 7.1111111111rem;
 	height: 7.1111111111rem;
 	margin: -0.8611111111rem;
@@ -62,18 +63,20 @@
 }
 
 .ssb__element.agetimer .fxs-ring-meter__ring-left,
-.ssb__element.agetimer .fxs-ring-meter__ring-right {
-	background-image: url("fs://game/hud_age_circle_rad.png");
+.ssb__element.agetimer .fxs-ring-meter__ring-right,
+.ssb__element.ageextended .fxs-ring-meter__ring-left,
+.ssb__element.ageextended .fxs-ring-meter__ring-right {
+	background-image: url("blp:hud_age_circle_rad");
 }
 
 .ssb__element.tech .fxs-ring-meter__ring-left,
 .ssb__element.tech .fxs-ring-meter__ring-right {
-	background-image: url("fs://game/hud_tech_circle_rad.png");
+	background-image: url("blp:hud_tech_circle_rad");
 }
 
 .ssb__element.civic .fxs-ring-meter__ring-left,
 .ssb__element.civic .fxs-ring-meter__ring-right {
-	background-image: url("fs://game/hud_civic_circle_rad.png");
+	background-image: url("blp:hud_civic_circle_rad");
 }
 
 .ssb__texture-ring .fxs-ring-meter__ring-left {
@@ -106,103 +109,129 @@
 .ssb__button-iconbg.agetimer {
 	width: 7.1111111111rem;
 	height: 7.1111111111rem;
-	background-image: url("fs://game/hud_age_circle_bk.png");
+	background-image: url("blp:hud_age_circle_bk");
 }
 
 .ssb__button-iconbg--idle.agetimer {
 	opacity: 0;
-	background-image: url("fs://game/hud_age_circle_bk.png");
+	background-image: url("blp:hud_age_circle_bk");
 }
 
 .ssb__button-iconbg--hover.agetimer {
 	opacity: 0;
-	background-image: url("fs://game/hud_age_circle_hov.png");
+	background-image: url("blp:hud_age_circle_hov");
 }
 
 .ssb__button-iconbg--active.agetimer {
 	opacity: 0;
-	background-image: url("fs://game/hud_age_circle_prs.png");
+	background-image: url("blp:hud_age_circle_prs");
 }
 
 .ssb__button-iconbg--disabled.agetimer {
 	opacity: 0;
-	background-image: url("fs://game/hud_age_circle_dis.png");
+	background-image: url("blp:hud_age_circle_dis");
+}
+
+.ssb__button-iconbg.ageextended {
+	width: 7.1111111111rem;
+	height: 7.1111111111rem;
+	background-image: url("blp:hud_age_circle_bk");
+}
+
+.ssb__button-iconbg--idle.ageextended {
+	opacity: 0;
+	background-image: url("blp:hud_age_circle_bk");
+}
+
+.ssb__button-iconbg--hover.ageextended {
+	opacity: 0;
+	background-image: url("blp:hud_age_circle_hov");
+}
+
+.ssb__button-iconbg--active.ageextended {
+	opacity: 0;
+	background-image: url("blp:hud_age_circle_prs");
+}
+
+.ssb__button-iconbg--disabled.ageextended {
+	opacity: 0;
+	background-image: url("blp:hud_age_circle_dis");
 }
 
 .ssb__button-iconbg.tech {
 	width: 7.1111111111rem;
 	height: 7.1111111111rem;
-	background-image: url("fs://game/hud_tech_circle_bk.png");
+	background-image: url("blp:hud_tech_circle_bk");
 }
 
 .ssb__button-iconbg--idle.tech {
 	opacity: 0;
-	background-image: url("fs://game/hud_tech_circle_bk.png");
+	background-image: url("blp:hud_tech_circle_bk");
 }
 
 .ssb__button-iconbg--hover.tech {
 	opacity: 0;
-	background-image: url("fs://game/hud_tech_circle_hov.png");
+	background-image: url("blp:hud_tech_circle_hov");
 }
 
 .ssb__button-iconbg--active.tech {
 	opacity: 0;
-	background-image: url("fs://game/hud_tech_circle_prs.png");
+	background-image: url("blp:hud_tech_circle_prs");
 }
 
 .ssb__button-iconbg--disabled.tech {
 	opacity: 0;
-	background-image: url("fs://game/hud_tech_circle_dis.png");
+	background-image: url("blp:hud_tech_circle_dis");
 }
 
 .ssb__button-iconbg.civic {
 	width: 7.1111111111rem;
 	height: 7.1111111111rem;
-	background-image: url("fs://game/hud_civic_circle_bk.png");
+	background-image: url("blp:hud_civic_circle_bk");
 }
 
 .ssb__button-iconbg--idle.civic {
 	opacity: 0;
-	background-image: url("fs://game/hud_civic_circle_bk.png");
+	background-image: url("blp:hud_civic_circle_bk");
 }
 
 .ssb__button-iconbg--hover.civic {
 	opacity: 0;
-	background-image: url("fs://game/hud_civic_circle_hov.png");
+	background-image: url("blp:hud_civic_circle_hov");
 }
 
 .ssb__button-iconbg--active.civic {
 	opacity: 0;
-	background-image: url("fs://game/hud_civic_circle_prs.png");
+	background-image: url("blp:hud_civic_circle_prs");
 }
 
 .ssb__button-iconbg--disabled.civic {
 	opacity: 0;
-	background-image: url("fs://game/hud_civic_circle_dis.png");
+	background-image: url("blp:hud_civic_circle_dis");
 }
 
 .ssb__button-iconbg {
-	background-image: url("fs://game/hud_sub_circle_bk.png");
+	background-image: url("blp:hud_sub_circle_bk");
 }
 
 .ssb__button-iconbg--idle {
 	opacity: 0;
-	background-image: url("fs://game/hud_sub_circle_bk.png");
+	background-image: url("blp:hud_sub_circle_bk");
 }
 
 .ssb__button-iconbg--hover {
 	opacity: 0;
-	background-image: url("fs://game/hud_sub_circle_hov.png");
+	background-image: url("blp:hud_sub_circle_hov");
 }
 
 .ssb__button-iconbg--active {
 	opacity: 0;
-	background-image: url("fs://game/hud_sub_circle_prs.png");
+	background-image: url("blp:hud_sub_circle_prs");
 }
 
 .ssb__button-iconbg--disabled {
 	opacity: 0;
-	background-image: url("fs://game/hud_sub_circle_dis.png");
+	background-image: url("blp:hud_sub_circle_dis");
 }
 
 .ssb__button-iconbg {
@@ -217,39 +246,43 @@
 }
 
 .ssb__button-icon.agetimer {
-	background-image: url("fs://game/sub_agetimer.png");
+	background-image: url("blp:sub_agetimer");
+}
+
+.ssb__button-icon.ageextended {
+	background-image: url("blp:hud_omt_infinity");
 }
 
 .ssb__button-icon.tech {
-	background-image: url("fs://game/sub_tech.png");
+	background-image: url("blp:sub_tech");
 }
 
 .ssb__button-icon.civic {
-	background-image: url("fs://game/sub_civics.png");
+	background-image: url("blp:sub_civics");
 }
 
 .ssb__button-icon.gov {
-	background-image: url("fs://game/sub_govt.png");
+	background-image: url("blp:sub_govt");
 }
 
 .ssb__button-icon.religion {
-	background-image: url("fs://game/sub_religion.png");
+	background-image: url("blp:sub_religion");
 }
 
 .ssb__button-icon.resources {
-	background-image: url("fs://game/sub_resource.png");
+	background-image: url("blp:sub_resource");
 }
 
 .ssb__button-icon.greatworks {
-	background-image: url("fs://game/sub_greatworks.png");
+	background-image: url("blp:sub_greatworks");
 }
 
 .ssb__button-icon.unlocks {
-	background-image: url("fs://game/sub_unlock.png");
+	background-image: url("blp:sub_unlock");
 }
 
 .ssb__button-icon.advanced-start {
-	background-image: url("fs://game/sub_advstart.png");
+	background-image: url("blp:sub_advstart");
 }
 
 .ssb__button-icon {

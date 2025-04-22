@@ -78,19 +78,38 @@ class PanelSubSystemDock extends Panel {
 		fragment.appendChild(this.buttonContainer);
 		this.animateInType = this.animateOutType = AnchorType.Fade;
 
-		const ageElements = this.addRingButton({
-			useCrisisMeter: true,
-			tooltip: "LOC_UI_VICTORY_PROGRESS",
-			callback: this.openRankings,
-			class: ["ring-age", "tut-age"],
-			ringClass: "ssb__texture-ring",
-			modifierClass: 'agetimer',
-			audio: "age-progress",
-			focusedAudio: "data-audio-focus-large"
-		});
+		const isExtendedGame = Game.AgeProgressManager.isExtendedGame;
+		if (isExtendedGame) {
+			const ageElements = this.addRingButton({
+				useCrisisMeter: false,
+				tooltip: "LOC_UI_VICTORY_PROGRESS",
+				callback: this.openRankings,
+				class: ["ring-age", "tut-age"],
+				ringClass: "ssb__texture-ring",
+				modifierClass: 'ageextended',
+				audio: "age-progress",
+				focusedAudio: "data-audio-focus-large"
+			});
 
-		this.ageRing = ageElements.ring;
-		this.ageTurnCounter = ageElements.turnCounter;
+			this.ageRing = ageElements.ring;
+			this.ageTurnCounter = ageElements.turnCounter;
+		}
+		else {
+			const ageElements = this.addRingButton({
+				useCrisisMeter: true,
+				tooltip: "LOC_UI_VICTORY_PROGRESS",
+				callback: this.openRankings,
+				class: ["ring-age", "tut-age"],
+				ringClass: "ssb__texture-ring",
+				modifierClass: 'agetimer',
+				audio: "age-progress",
+				focusedAudio: "data-audio-focus-large"
+			});
+
+			this.ageRing = ageElements.ring;
+			this.ageTurnCounter = ageElements.turnCounter;
+		}
+
 
 		const techElements = this.addRingButton({
 			tooltip: "LOC_UI_VIEW_TECH_TREE",
@@ -137,45 +156,63 @@ class PanelSubSystemDock extends Panel {
 	onAttach() {
 		super.onAttach();
 
-		engine.on('PlayerTurnActivated', this.onPlayerTurnBegin, this);
-		engine.on('PlayerTurnDeactivated', this.onPlayerTurnEnd, this);
-		engine.on('ScienceYieldChanged', this.onTechsUpdated, this);
-		engine.on('TechTreeChanged', this.onTechsUpdated, this);
-		engine.on('TechNodeCompleted', this.onTechsUpdated, this);
-		engine.on('PlayerYieldChanged', this.onPlayerYieldUpdated, this);
-		engine.on('PlayerYieldGranted', this.onPlayerYieldGranted, this);
-		engine.on('CultureYieldChanged', this.onCultureUpdated, this);
-		engine.on('CultureTreeChanged', this.onCultureUpdated, this);
-		engine.on('CultureNodeCompleted', this.onCultureUpdated, this);
-		engine.on('AgeProgressionChanged', this.updateAgeProgression, this);
+		this.Root.listenForEngineEvent('PlayerTurnActivated', this.onPlayerTurnBegin, this);
+		this.Root.listenForEngineEvent('PlayerTurnDeactivated', this.onPlayerTurnEnd, this);
+		this.Root.listenForEngineEvent('ScienceYieldChanged', this.onTechsUpdated, this);
+		this.Root.listenForEngineEvent('TechTreeChanged', this.onTechsUpdated, this);
+		this.Root.listenForEngineEvent('TechTargetChanged', this.onTechTargetUpdated, this);
+		this.Root.listenForEngineEvent('TechNodeCompleted', this.onTechsUpdated, this);
+		this.Root.listenForEngineEvent('PlayerYieldChanged', this.onPlayerYieldUpdated, this);
+		this.Root.listenForEngineEvent('PlayerYieldGranted', this.onPlayerYieldGranted, this);
+		this.Root.listenForEngineEvent('CultureYieldChanged', this.onCultureUpdated, this);
+		this.Root.listenForEngineEvent('CultureTreeChanged', this.onCultureUpdated, this);
+		this.Root.listenForEngineEvent('CultureTargetChanged', this.onCultureTargetUpdated, this);
+		this.Root.listenForEngineEvent('CultureNodeCompleted', this.onCultureUpdated, this);
+		this.Root.listenForEngineEvent('AgeProgressionChanged', this.updateAgeProgression, this);
 
-		engine.on('ResourceAssigned', this.updateResourcesButton, this);
-		engine.on('PlotOwnershipChanged', this.updateResourcesButton, this);
+		this.Root.listenForEngineEvent('ResourceAssigned', this.updateResourcesButton, this);
+		this.Root.listenForEngineEvent('PlotOwnershipChanged', this.updateResourcesButton, this);
 
-		window.addEventListener('focus-sub-system', this.focusSubsystemListener);
+		this.Root.listenForEngineEvent('GameExtended', this.onGameExtended, this);
+
+		const religionName = this.getReligionScreenName();
+
+		if (religionName) {
+			Panel.addEngineOpenEvent(religionName, () => {
+				this.openReligionViewer();
+			});
+		}
+
+		Panel.addEngineOpenEvent('screen-culture-tree-chooser', this.openCultureChooser);
+		Panel.addEngineOpenEvent('screen-victory-progress', this.openRankings);
+		Panel.addEngineOpenEvent('screen-tech-tree-chooser', this.openTechChooser);
+		Panel.addEngineOpenEvent('screen-policies', this.onOpenPolicies);
+		Panel.addEngineOpenEvent('screen-great-works', this.onOpenGreatWorks);
+		Panel.addEngineOpenEvent('screen-resource-allocation', this.onOpenResourceAllocation);
+		Panel.addEngineOpenEvent('screen-unlocks', this.onOpenUnlocks);
+
+		this.Root.listenForWindowEvent('focus-sub-system', this.focusSubsystemListener);
 	}
 
 	onDetach() {
-		engine.off('PlayerTurnActivated', this.onPlayerTurnBegin, this);
-		engine.off('PlayerTurnDeactivated', this.onPlayerTurnEnd, this);
-		engine.off('PlayerYieldChanged', this.onPlayerYieldUpdated, this);
-		engine.off('PlayerYieldGranted', this.onPlayerYieldGranted, this);
-		engine.off('ScienceYieldChanged', this.onTechsUpdated, this);
-		engine.off('TechTreeChanged', this.onTechsUpdated, this);
-		engine.off('TechNodeCompleted', this.onTechsUpdated, this);
-		engine.off('CultureYieldChanged', this.onCultureUpdated, this);
-		engine.off('CultureTreeChanged', this.onCultureUpdated, this);
-		engine.off('CultureNodeCompleted', this.onCultureUpdated, this);
-		engine.off('ResourceAssigned', this.updateResourcesButton, this);
-		engine.off('PlotOwnershipChanged', this.updateResourcesButton, this);
-		engine.off('AgeProgressionChanged', this.updateAgeProgression, this);
+		const religionName = this.getReligionScreenName();
 
-		window.removeEventListener('focus-sub-system', this.focusSubsystemListener);
+		if (religionName) {
+			Panel.removeEngineOpenEvent(religionName);
+		}
+
+		Panel.removeEngineOpenEvent('screen-unlocks', this.onOpenUnlocks);
+		Panel.removeEngineOpenEvent('screen-resource-allocation', this.onOpenResourceAllocation);
+		Panel.removeEngineOpenEvent('screen-great-works', this.onOpenGreatWorks);
+		Panel.removeEngineOpenEvent('screen-policies', this.onOpenPolicies);
+		Panel.removeEngineOpenEvent('screen-tech-tree-chooser', this.openTechChooser);
+		Panel.removeEngineOpenEvent('screen-victory-progress', this.openRankings);
+		Panel.removeEngineOpenEvent('screen-culture-tree-chooser', this.openCultureChooser);
 
 		super.onDetach();
 	}
 
-	private addRingButton(buttonData: RingButtonData) {
+	private addRingButton(buttonData: RingButtonData, index?: number) {
 		const turnCounter = document.createElement("div");
 		turnCounter.classList.add("ssb-button__turn-counter");
 		turnCounter.setAttribute("data-tut-highlight", "founderHighlight");
@@ -193,7 +230,19 @@ class PanelSubSystemDock extends Panel {
 		ringAndButton.button.setAttribute("data-audio-group-ref", "audio-panel-sub-system-dock");
 		ringAndButton.button.setAttribute("data-audio-press-ref", "data-audio-press-large");
 		ringAndButton.button.setAttribute("data-audio-activate-ref", "none");
-		this.buttonContainer.appendChild(ringAndButton.ring);
+
+		if (index == null) {
+			this.buttonContainer.appendChild(ringAndButton.ring);
+		}
+		else {
+			const beforeNode = this.buttonContainer.childNodes[index];
+			if (beforeNode) {
+				this.buttonContainer.insertBefore(ringAndButton.ring, beforeNode);
+			}
+			else {
+				this.buttonContainer.appendChild(ringAndButton.ring);
+			}
+		}
 		ringAndButton.ring.appendChild(ringAndButton.button);
 		ringAndButton.ring.appendChild(ringAndButton.turnCounter);
 
@@ -419,7 +468,10 @@ class PanelSubSystemDock extends Panel {
 		const ageProgress = Game.AgeProgressManager.getCurrentAgeProgressionPoints();
 		const maxAgeProgress = Game.AgeProgressManager.getMaxAgeProgressionPoints();
 
-		if (Game.maxTurns > 0) {
+		if (Game.AgeProgressManager.isExtendedGame) {
+			this.ageRing.removeAttribute('data-tooltip-content');
+		}
+		else if (Game.maxTurns > 0) {
 			const ageProgressFrac = Locale.compose("LOC_ACTION_PANEL_CURRENT_TURN_OVER_MAX_TURNS", Game.turn, Game.maxTurns);
 			this.ageRing.setAttribute('data-tooltip-content', ageProgressFrac);
 		} else {
@@ -431,15 +483,23 @@ class PanelSubSystemDock extends Panel {
 	}
 
 	private updateVictoryMeter(victoryProgression: number) {
-		const maxAgeProgress = Game.AgeProgressManager.getMaxAgeProgressionPoints();
+		if (Game.AgeProgressManager.isExtendedGame) {
+			this.ageRing?.setAttribute('min-value', '0');
+			this.ageRing?.setAttribute('max-value', '0');
+			this.ageRing?.setAttribute('value', '0');
+			this.updateTurnCounter(this.ageTurnCounter, '∞');
+		}
+		else {
+			const maxAgeProgress = Game.AgeProgressManager.getMaxAgeProgressionPoints();
 
-		this.ageRing?.setAttribute('min-value', '0');
-		this.ageRing?.setAttribute('max-value', maxAgeProgress.toString());
-		this.ageRing?.setAttribute('value', victoryProgression.toString());
+			this.ageRing?.setAttribute('min-value', '0');
+			this.ageRing?.setAttribute('max-value', maxAgeProgress.toString());
+			this.ageRing?.setAttribute('value', victoryProgression.toString());
 
-		const ageProgressPercent = Locale.toPercent(victoryProgression / maxAgeProgress);
+			const ageProgressPercent = Locale.toPercent(victoryProgression / maxAgeProgress);
 
-		this.updateTurnCounter(this.ageTurnCounter, ageProgressPercent);
+			this.updateTurnCounter(this.ageTurnCounter, ageProgressPercent);
+		}
 	}
 
 	private updateAgeProgression(data: AgeProgressionChanged_EventData) {
@@ -610,11 +670,27 @@ class PanelSubSystemDock extends Panel {
 		this.updateTechButtonTimer();
 	}
 
+	private onTechTargetUpdated(data: PlayerProgressionTarget_EventData) {
+		if (data.player && data.player != GameContext.localPlayerID) {
+			return;
+		}
+
+		this.updateTechButtonTimer();
+	}
+
 	private onCultureUpdated(data: CultureYieldChanged_EventData | PlayerProgressionTree_EventData) {
 		if (data.player && data.player != GameContext.localPlayerID) {
 			//Not us, we don't need to update
 			return;
 		}
+		this.updateCultureButtonTimer();
+	}
+
+	private onCultureTargetUpdated(data: PlayerProgressionTarget_EventData) {
+		if (data.player && data.player != GameContext.localPlayerID) {
+			return;
+		}
+
 		this.updateCultureButtonTimer();
 	}
 
@@ -631,6 +707,32 @@ class PanelSubSystemDock extends Panel {
 			return;
 		}
 		this.updateButtonTimers();
+	}
+
+	private onGameExtended(_data: GameExtended_EventData) {
+		// Swap out the age progress button w/ an Extended age button.
+		const ring = this.ageRing;
+		if (ring) {
+			ring.remove();
+			this.ageRing = null;
+			this.ageTurnCounter = null;
+		}
+
+		const ageElements = this.addRingButton({
+			useCrisisMeter: false,
+			tooltip: "LOC_UI_VICTORY_PROGRESS",
+			callback: this.openRankings,
+			class: ["ring-age", "tut-age"],
+			ringClass: "ssb__texture-ring",
+			modifierClass: 'ageextended',
+			audio: "age-progress",
+			focusedAudio: "data-audio-focus-large"
+		}, 0);
+
+		this.ageRing = ageElements.ring;
+		this.ageTurnCounter = ageElements.turnCounter;
+
+		this.updateAgeButtonTimer();
 	}
 
 	private onFocusSubsystem() {
@@ -672,7 +774,7 @@ class PanelSubSystemDock extends Panel {
 		ContextManager.push("screen-unlocks", { singleton: true, createMouseGuard: true });
 	}
 
-	private openReligionViewer() {
+	private getReligionScreenName(): string | undefined {
 		const curAge: AgeType = Game.age;
 		if (curAge == Database.makeHash("AGE_ANTIQUITY")) {
 			const player: PlayerLibrary | null = Players.get(GameContext.localPlayerID);
@@ -695,10 +797,10 @@ class PanelSubSystemDock extends Panel {
 			const numPantheonsToAdd: number = playerReligion.getNumPantheonsUnlocked();
 			const mustAddPantheons: boolean = playerCulture.isNodeUnlocked("NODE_CIVIC_AQ_MAIN_MYSTICISM") && numPantheonsToAdd > 0;
 			if (mustAddPantheons) {
-				ContextManager.push("screen-pantheon-chooser", { singleton: true });
+				return "screen-pantheon-chooser";
 			}
 			else {
-				ContextManager.push("panel-pantheon-complete", { singleton: true });
+				return "panel-pantheon-complete";
 			}
 		}
 		else if (curAge == Database.makeHash("AGE_EXPLORATION")) {
@@ -712,14 +814,24 @@ class PanelSubSystemDock extends Panel {
 				return;
 			}
 			if (player.Religion.canCreateReligion() && !player.Religion.hasCreatedReligion()) {
-				ContextManager.push("panel-religion-picker", { singleton: true });
+				return "panel-religion-picker";
 			}
 			else {
-				ContextManager.push("panel-belief-picker", { singleton: true });
+				return "panel-belief-picker";
 			}
 		}
 		else {
 			console.error("panel-sub-system-dock: openReligionViewer() - religion button pressed during an age that is neither Exploration nor Antiquity!");
+		}
+
+		return;
+	}
+
+	private openReligionViewer() {
+		const screen: string | undefined = this.getReligionScreenName();
+
+		if (screen) {
+			ContextManager.push(screen, { singleton: true });
 		}
 	}
 }
@@ -730,17 +842,18 @@ Controls.define('panel-sub-system-dock', {
 	classNames: ['sub-system-dock', 'allowCameraMovement'],
 	styles: ["fs://game/base-standard/ui/sub-system-dock/panel-sub-system-dock.css"],
 	images: [
-		'fs://game/core/sub_agetimer.png',
-		'fs://game/core/sub_tech.png',
-		'fs://game/core/sub_civics.png',
-		'fs://game/core/sub_govt.png',
-		'fs://game/core/sub_resource.png',
-		'fs://game/core/sub_greatworks.png',
-		'fs://game/core/sub_religion.png',
-		'fs://game/core/sub_greatworks.png',
-		'fs://game/core/hud_age_circle_bk.png',
-		'fs://game/core/hud_tech_circle_bk.png',
-		'fs://game/core/hud_civic_circle_bk.png',
-		'fs://game/core/hud_sub_circle_bk.png'
-	]
+		'blp:sub_agetimer',
+		'blp:hud_omt_infinity',
+		'blp:sub_tech',
+		'blp:sub_civics',
+		'blp:sub_govt',
+		'blp:sub_resource',
+		'blp:sub_greatworks',
+		'blp:sub_religion',
+		'blp:sub_greatworks',
+		'blp:hud_age_circle_bk',
+		'blp:hud_tech_circle_bk',
+		'blp:hud_civic_circle_bk',
+		'blp:hud_sub_circle_bk'
+	],
 });

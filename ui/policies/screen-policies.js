@@ -43,14 +43,14 @@ const getPolicyTabItems = (numOpenNormalSlots, numOpenCrisisSlots) => {
         iconText: numOpenCrisisSlots.toString(),
         className: "flex-row-reverse"
     };
-    if (GameInfo.Ages.lookup(Game.age).AgeType == "AGE_MODERN") {
+    if (Game.AgeProgressManager.isFinalAge || !Game.CrisisManager.isCrisisEnabled) {
         return [overviewTab, normalTab];
     }
     else {
         return [overviewTab, normalTab, crisisTab];
     }
 };
-class ScreenPolicies extends Panel {
+export class ScreenPolicies extends Panel {
     constructor() {
         super(...arguments);
         this.confirmButtonListener = this.onConfirm.bind(this);
@@ -71,9 +71,30 @@ class ScreenPolicies extends Panel {
         this.maxCrisisPoliciesOnOverview = 2;
         this.initialSetupDone = false;
         this.crisisEventMarkers = [
-            { locStr: "LOC_UI_POLICIES_CRISIS_BEGINS", timelinePlacement: Game.CrisisManager.getCrisisStageTriggerPercent(0) / 100 },
-            { locStr: "LOC_UI_POLICIES_CRISIS_INTENSIFIES", timelinePlacement: Game.CrisisManager.getCrisisStageTriggerPercent(1) / 100 },
-            { locStr: "LOC_UI_POLICIES_CRISIS_CULMINATES", timelinePlacement: Game.CrisisManager.getCrisisStageTriggerPercent(2) / 100 }
+            {
+                progressLabelStr: "LOC_UI_POLICIES_TURNS_UNTIL_CRISIS_BEGINS",
+                progressLabelStrRange: "LOC_UI_POLICIES_TURNS_UNTIL_CRISIS_BEGINS_RANGE",
+                locStr: "LOC_UI_POLICIES_CRISIS_BEGINS",
+                timelinePlacement: Game.CrisisManager.getCrisisStageTriggerPercent(0) / 100
+            },
+            {
+                progressLabelStr: "LOC_UI_POLICIES_TURNS_UNTIL_CRISIS_INTENSIFIES",
+                progressLabelStrRange: "LOC_UI_POLICIES_TURNS_UNTIL_CRISIS_INTENSIFIES_RANGE",
+                locStr: "LOC_UI_POLICIES_CRISIS_INTENSIFIES",
+                timelinePlacement: Game.CrisisManager.getCrisisStageTriggerPercent(1) / 100
+            },
+            {
+                progressLabelStr: "LOC_UI_POLICIES_TURNS_UNTIL_CRISIS_CULMINATES",
+                progressLabelStrRange: "LOC_UI_POLICIES_TURNS_UNTIL_CRISIS_CULMINATES_RANGE",
+                locStr: "LOC_UI_POLICIES_CRISIS_CULMINATES",
+                timelinePlacement: Game.CrisisManager.getCrisisStageTriggerPercent(2) / 100
+            },
+            {
+                progressLabelStr: "LOC_UI_POLICIES_TURNS_UNTIL_CRISIS_ENDS",
+                progressLabelStrRange: "LOC_UI_POLICIES_TURNS_UNTIL_CRISIS_ENDS_RANGE",
+                locStr: "LOC_UI_POLICIES_CRISIS_ENDS",
+                timelinePlacement: Game.CrisisManager.getCrisisStageTriggerPercent(3) / 100
+            }
         ];
     }
     onInitialize() {
@@ -98,6 +119,9 @@ class ScreenPolicies extends Panel {
         PoliciesData.update();
         const closeButton = MustGetElement("fxs-close-button", this.Root);
         closeButton.addEventListener('action-activate', () => {
+            this.close();
+        });
+        Panel.addEngineCloseEvent(this.Root.typeName, () => {
             this.close();
         });
         this.localPlayer = Players.get(GameContext.localPlayerID);
@@ -132,6 +156,7 @@ class ScreenPolicies extends Panel {
         Databind.classToggle(this.confirmButtonContainer, 'hidden', `g_NavTray.isTrayRequired`);
     }
     onDetach() {
+        Panel.removeEngineCloseEvent(this.Root.typeName);
         this.Root.removeEventListener(InputEngineEventName, this.engineInputListener);
         this.Root.removeEventListener(NavigateInputEventName, this.navigateInputListener);
         this.confirmButton.removeEventListener('action-activate', this.confirmButtonListener);
@@ -469,6 +494,37 @@ class ScreenPolicies extends Panel {
         const maxAgeProgression = Game.AgeProgressManager.getMaxAgeProgressionPoints();
         const ageProgressionPercent = currentAgeProgression / maxAgeProgression;
         innerProgressBar.style.width = `${utils.clamp(ageProgressionPercent * 100, 0, 100)}%`;
+        const crisisProgressText = MustGetElement(".policies__crisis-progress-text", this.crisisWindow);
+        for (let i = 0; i < this.crisisEventMarkers.length; i++) {
+            if (ageProgressionPercent < this.crisisEventMarkers[i].timelinePlacement) {
+                break;
+            }
+        }
+        const crisisStage = Game.CrisisManager.getCurrentCrisisStage();
+        const nextCrisisStage = Math.max(0, crisisStage + 1);
+        let showCrisisText = false;
+        if (Game.CrisisManager.isCrisisEnabled && nextCrisisStage < this.crisisEventMarkers.length) {
+            const { progressLabelStr, progressLabelStrRange } = this.crisisEventMarkers[nextCrisisStage];
+            const minTurns = Game.CrisisManager.getMinimumTurnsRemainingInCurrentCrisis(crisisStage);
+            const maxTurns = Game.CrisisManager.getMaximumTurnsRemainingInCurrentCrisis(crisisStage);
+            if (minTurns != -1) {
+                // If min is invalid or higher than max, collapse to a single value
+                if (minTurns < 1) {
+                    crisisProgressText.innerHTML = Locale.stylize(progressLabelStr, maxTurns);
+                    showCrisisText = true;
+                }
+                else if (maxTurns < minTurns) {
+                    crisisProgressText.innerHTML = Locale.stylize(progressLabelStr, minTurns);
+                    showCrisisText = true;
+                }
+                // Otherwise show a range
+                else {
+                    crisisProgressText.innerHTML = Locale.stylize(progressLabelStrRange, minTurns, maxTurns);
+                    showCrisisText = true;
+                }
+            }
+        }
+        crisisProgressText.classList.toggle("hidden", !showCrisisText);
         for (const crisisMarker of this.crisisEventMarkers) {
             const marker = document.createElement("div");
             marker.classList.value = `w-0\\.5 h-4 bg-primary text-center absolute bottom-0`;
@@ -959,5 +1015,4 @@ Controls.define('screen-policies', {
     content: ['fs://game/base-standard/ui/policies/screen-policies.html'],
     tabIndex: -1
 });
-
 //# sourceMappingURL=file:///base-standard/ui/policies/screen-policies.js.map

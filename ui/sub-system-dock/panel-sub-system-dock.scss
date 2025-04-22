@@ -77,7 +77,8 @@ $button-shadow-size: $button-size - $button-size-inner;
 	}
 }
 
-.ssb__element.agetimer {
+.ssb__element.agetimer,
+.ssb__element.ageextended {
 	width: pixels($age-button-size);
 	height: pixels($age-button-size);
 
@@ -96,11 +97,12 @@ $button-shadow-size: $button-size - $button-size-inner;
 	margin: pixels(calc(($techcivic-button-shadow-size - $techcivic-button-overlap) / 2));
 }
 
-.ssb__element.agetimer {
+.ssb__element.agetimer,
+.ssb__element.ageextended {
 
 	.fxs-ring-meter__ring-left,
 	.fxs-ring-meter__ring-right {
-		background-image: url("fs://game/hud_age_circle_rad.png");
+		background-image: url('blp:hud_age_circle_rad');
 	}
 }
 
@@ -108,7 +110,7 @@ $button-shadow-size: $button-size - $button-size-inner;
 
 	.fxs-ring-meter__ring-left,
 	.fxs-ring-meter__ring-right {
-		background-image: url("fs://game/hud_tech_circle_rad.png");
+		background-image: url('blp:hud_tech_circle_rad');
 	}
 }
 
@@ -116,7 +118,7 @@ $button-shadow-size: $button-size - $button-size-inner;
 
 	.fxs-ring-meter__ring-left,
 	.fxs-ring-meter__ring-right {
-		background-image: url("fs://game/hud_civic_circle_rad.png");
+		background-image: url('blp:hud_civic_circle_rad');
 	}
 }
 
@@ -161,6 +163,7 @@ $icon-states: (
 );
 $subsystem-iconbg-state-map: (
 	"agetimer": ("idle": "hud_age_circle_bk", "hover": "hud_age_circle_hov", "active": "hud_age_circle_prs", "disabled": "hud_age_circle_dis"),
+	"ageextended": ("idle": "hud_age_circle_bk", "hover": "hud_age_circle_hov", "active": "hud_age_circle_prs", "disabled": "hud_age_circle_dis"),
 	"tech": ("idle": "hud_tech_circle_bk", "hover": "hud_tech_circle_hov", "active": "hud_tech_circle_prs", "disabled": "hud_tech_circle_dis"),
 	"civic": ("idle": "hud_civic_circle_bk", "hover": "hud_civic_circle_hov", "active": "hud_civic_circle_prs", "disabled": "hud_civic_circle_dis"),
 	"default": ("idle": "hud_sub_circle_bk", "hover": "hud_sub_circle_hov", "active": "hud_sub_circle_prs", "disabled": "hud_sub_circle_dis")
@@ -172,13 +175,13 @@ $subsystem-states in $subsystem-iconbg-state-map {
 		.ssb__button-iconbg.#{$subsystem} {
 			width: pixels(128);
 			height: pixels(128);
-			background-image: url('fs://game/#{map.get($subsystem-states, "idle")}.png');
+			background-image: url('blp:#{map.get($subsystem-states, "idle")}');
 		}
 	}
 
 	@else {
 		.ssb__button-iconbg {
-			background-image: url('fs://game/#{map.get($subsystem-states, "idle")}.png');
+			background-image: url('blp:#{map.get($subsystem-states, "idle")}');
 		}
 	}
 
@@ -187,14 +190,14 @@ $subsystem-states in $subsystem-iconbg-state-map {
 		@if $subsystem !="default" {
 			.ssb__button-iconbg--#{$state}.#{$subsystem} {
 				opacity: 0;
-				background-image: url('fs://game/#{$icon}.png');
+				background-image: url('blp:#{$icon}');
 			}
 		}
 
 		@else {
 			.ssb__button-iconbg--#{$state} {
 				opacity: 0;
-				background-image: url('fs://game/#{$icon}.png');
+				background-image: url('blp:#{$icon}');
 			}
 		}
 	}
@@ -214,6 +217,7 @@ $subsystem-states in $subsystem-iconbg-state-map {
 
 $subsystem-icon-map: (
 	"agetimer": "sub_agetimer",
+	"ageextended": "hud_omt_infinity",
 	"tech": "sub_tech",
 	"civic": "sub_civics",
 	"gov": "sub_govt",
@@ -227,7 +231,7 @@ $subsystem-icon-map: (
 @each $subsystem,
 $icon in $subsystem-icon-map {
 	.ssb__button-icon.#{$subsystem} {
-		background-image: url('fs://game/#{$icon}.png');
+		background-image: url('blp:#{$icon}');
 	}
 }
 
