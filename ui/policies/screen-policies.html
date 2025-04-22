@@ -1,0 +1,174 @@
+<fxs-frame frame-style="f2" override-styling="pt-5 mt-6 relative flex size-full px-10 pb-10" filigree-class="mt-3"
+		   top-border-style="b2" class="flex items-center flex-col">
+	<fxs-close-button class="top-4 right-4"></fxs-close-button>
+	<fxs-header title="LOC_UI_MINI_MAP_GOVERNMENT"></fxs-header>
+	<fxs-tab-bar class="mb-5 self-center" tab-item-class="min-w-40 mx-18"></fxs-tab-bar>
+	<div class="policies__main-window flex-auto">
+		<!-- overview -->
+		<div class="policies__overview hidden flex h-full" tabindex="-1">
+			<fxs-scrollable class="policies__overview-scrollable flex flex-auto" handle-gamepad-pan="true"
+							attached-scrollbar="true" allow-mouse-panning="true">
+				<div class="flex">
+					<div class="flex flex-col w-1\/2">
+						<div class="mx-6 grow">
+							<fxs-header title="LOC_UI_POLICIES_CURRENT_GOVERNMENT" filigree-style="h4"
+										class="mb-3"></fxs-header>
+							<fxs-inner-frame class="flex flex-col items-center relative px-2">
+								<div class="relative font-body-base p-6 my-px flex flex-col items-center">
+									<p class="policies__overview-gov-name relative font-title-xl tracking-100"></p>
+									<div class="policies__overview-government-divider w-128 h-1 mt-3 mb-2"></div>
+									<p class="policies__overview-gov-desc relative text-accent-4 my-4"></p>
+									<div class="policies__overview-gov-bonuses relative flex flex-col items-center">
+
+									</div>
+								</div>
+							</fxs-inner-frame>
+							<fxs-header title="LOC_TAG_CONSTRUCTIBLE_HAPPINESS" filigree-style="h4"
+										class="mt-6 mb-3"></fxs-header>
+							<fxs-inner-frame class="flex items-center relative">
+								<div class="flex items-center relative w-full justify-between">
+									<div class="flex items-center">
+										<fxs-ring-meter class="policies__overview-happiness-meter size-28 flex items-center justify-center"
+														ring-class="ssb__texture-ring">
+											<div
+												 class="policies__overview-happiness-meter-circle bg-no-repeat bg-center bg-cover size-22 flex items-center justify-center">
+												<div
+													 class="policies__overview-happiness-meter-image bg-no-repeat bg-center bg-cover size-12">
+												</div>
+											</div>
+										</fxs-ring-meter>
+										<div role="paragraph" class="flex flex-col pointer-events-auto">
+											<div
+												 class="policies__overview-turns-left-desc font-title-sm tracking-150 max-w-60">
+											</div>
+											<div class="policies__overview-turns-left-number font-body-sm"></div>
+										</div>
+									</div>
+									<div class="mr-7">
+										<div role="paragraph" class="flex flex-col items-center pointer-events-auto">
+											<div data-l10n-id="LOC_ATTR_YIELD_INCOME"
+												 class="font-title-sm tracking-150">
+											</div>
+											<div class="policies__happiness-per-turn font-body-sm"></div>
+										</div>
+									</div>
+								</div>
+							</fxs-inner-frame>
+						</div>
+					</div>
+					<div class="flex flex-col items-center w-1\/2">
+						<div class="policies__overview-normal-section flex flex-col items-center">
+							<fxs-header title="LOC_UI_POLICIES_YOUR_SOCIAL_POLICIES" filigree-style="h4"
+										class="mb-1"></fxs-header>
+							<div class="flex-auto mx-3">
+								<div class="policies__overview-policies-container flex flex-wrap items-center justify-center"
+									 data-navrule-down="escape">
+
+								</div>
+							</div>
+						</div>
+						<div class="policies__overview-crisis-section flex flex-col items-center mt-7">
+							<fxs-header title="LOC_UI_POLICIES_YOUR_CRISIS_POLICIES" filigree-style="h4"></fxs-header>
+							<div class="flex-auto mx-3">
+								<div class="policies__overview-crisis-container flex flex-wrap items-center justify-center"
+									 data-navrule-up="escape">
+
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</fxs-scrollable>
+		</div>
+		<!-- normal policies view -->
+		<div class="policies__policies hidden flex flex-col items-center size-full">
+			<div class="policies__policies-unlock-text flex flex-col items-center self-center hidden mb-5">
+				<fxs-header class="policies__policies-unlock-text-header font-title-xl text-secondary"
+							filigree-style="none" title="LOC_UI_POLICIES_CAN_SWAP">
+				</fxs-header>
+				<div class="policies__policies-unlock-text-subheader font-body-base text-accent-4 text-center"></div>
+			</div>
+			<div class="policies__policies-all-container flex justify-center max-w-full shrink">
+				<div class="flex flex-col items-center policies-column">
+					<fxs-header filigree-style="h4" title="LOC_POLICIES_AVAILABLE_POLICIES" class="mt-3"></fxs-header>
+					<fxs-scrollable class="policies_policies-available-scrollable flex-auto" attached-scrollbar="true"
+									handle-gamepad-pan="true">
+						<div class="flex-auto mx-2">
+							<fxs-spatial-slot class="policies_policies-available-container flex flex-wrap items-center mt-2 justify-center"
+											  tabindex="-1" data-navrule-right="escape">
+
+							</fxs-spatial-slot>
+						</div>
+					</fxs-scrollable>
+				</div>
+				<div
+					 class="policies-arrow-container h-1\/2 flex flex-col items-center mx-3\.5 justify-around self-center">
+					<div class="policies-swap-arrow bg-no-repeat bg-center bg-contain size-9"></div>
+					<div class="policies-swap-arrow bg-no-repeat bg-center bg-contain size-9"></div>
+				</div>
+				<div class="flex flex-col items-center policies-column">
+					<fxs-header filigree-style="h4" title="LOC_POLICIES_ACTIVE_POLICIES" class="mt-3"></fxs-header>
+					<fxs-scrollable class="policies_policies-active-scrollable flex-auto" attached-scrollbar="true">
+						<div class="flex-auto mx-2">
+							<fxs-spatial-slot class="policies_policies-active-container flex flex-wrap items-center mt-2 justify-center"
+											  tabindex="-1" data-navrule-left="escape">
+
+							</fxs-spatial-slot>
+						</div>
+					</fxs-scrollable>
+				</div>
+			</div>
+		</div>
+		<!-- crisis view -->
+		<div class="policies__crisis hidden flex flex-col items-center size-full">
+			<div class="policies__crisis-progress-bar flex flex-col items-center mt-8">
+				<div class="w-full">
+					<div class="policies__crisis-marker-container mt-10 w-full relative">
+						<div class="w-0\.5 h-4 bg-primary text-center absolute bottom-0">
+							<p class="absolute min-w-20 max-w-20 bottom-4 font-title-2xs tracking-100"
+							   data-l10n-id="LOC_UI_POLICIES_CRISIS_AGE_BEGINS">
+							</p>
+						</div>
+					</div>
+					<div class="policies__crisis-progress-bar-outer h-2 w-full border border-primary">
+						<div class="policies__crisis-progress-bar-inner h-1\.5 border-primary"></div>
+					</div>
+				</div>
+			</div>
+			<div class="policies__crisis-all-container flex justify-center max-w-full shrink">
+				<div class="flex flex-col items-center policies-column">
+					<fxs-header filigree-style="h4" title="LOC_POLICIES_AVAILABLE_POLICIES" class="mt-4"></fxs-header>
+					<fxs-scrollable class="policies_crisis-available-scrollable flex-auto" attached-scrollbar="true"
+									handle-gamepad-pan="true">
+						<div class="flex-auto mx-2">
+							<fxs-spatial-slot class="policies_crisis-available-container flex flex-wrap items-center mt-2 justify-center"
+											  tabindex="-1" data-navrule-right="escape">
+
+							</fxs-spatial-slot>
+						</div>
+					</fxs-scrollable>
+				</div>
+				<div
+					 class="policies-arrow-container h-1\/2 flex flex-col items-center mx-3\.5 justify-around self-center">
+					<div class="policies-swap-arrow bg-no-repeat bg-center bg-contain size-9"></div>
+					<div class="policies-swap-arrow bg-no-repeat bg-center bg-contain size-9"></div>
+				</div>
+				<div class="flex flex-col items-center policies-column">
+					<fxs-header filigree-style="h4" title="LOC_UI_POLICIES_YOUR_CRISIS_POLICIES"
+								class="mt-4"></fxs-header>
+					<fxs-scrollable class="policies_crisis-active-scrollable flex-auto" attached-scrollbar="true">
+						<div class="flex-auto mx-2">
+							<fxs-spatial-slot class="policies_crisis-active-container flex flex flex-wrap items-center mt-2 justify-center"
+											  tabindex="-1" data-navrule-left="escape">
+
+							</fxs-spatial-slot>
+						</div>
+					</fxs-scrollable>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="policies__confirm-container self-center w-1\/2">
+		<fxs-hero-button caption="LOC_UI_RESOURCE_ALLOCATION_CONFIRM" class="mt-11" disabled="true"></fxs-hero-button>
+	</div>
+</fxs-frame>

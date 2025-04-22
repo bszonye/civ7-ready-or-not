@@ -1,0 +1,176 @@
+@use '../../../core/ui/utilities/utility-layout' as *;
+@use '../../../core/ui/utilities/utility-text' as *;
+@use '../../../core/ui/utilities/utility-shapes' as shapes;
+@use '../../../core/ui/themes/default/baseColors.scss';
+@use '../../../core/ui/themes/default/theme';
+
+.screen-policies {
+	top: pixels(128);
+	bottom: pixels(28);
+	left: pixels(190);
+	right: pixels(190);
+
+	@media (max-height: pixels(1000)) {
+		top: pixels(0);
+		bottom: pixels(0);
+		left: pixels(0);
+		right: pixels(0);
+	}
+}
+
+.policy-chooser-element {
+	width: pixels(300);
+	border-image-slice: 45 84 fill;
+	border-image-width: pixels(45) pixels(84);
+	border-image-outset: pixels(42) pixels(57);
+
+	@media (max-height: pixels(1000)) {
+		flex-grow: 1;
+	}
+
+	.normal-bg {
+		opacity: 1;
+	}
+
+	.glow-bg {
+		opacity: 0;
+	}
+
+	&:hover,
+	&:focus {
+		.glow-bg {
+			opacity: 1;
+		}
+
+		.normal-bg {
+			opacity: 0;
+		}
+	}
+}
+
+.policy-chooser-element__normal {
+	border-image-source: url("rect_card_idle");
+}
+
+.policy-chooser-element__normal-glow {
+	border-image-source: url("rect_card_idle_hover");
+}
+
+.policy-chooser-element__crisis {
+	border-image-source: url("rect_crisis_idle");
+}
+
+.policy-chooser-element__crisis-glow {
+	border-image-source: url("rect_crisis_hover");
+}
+
+.policy-chooser-element__normal-placeable {
+	border-image-source: url("rect_card_placeable");
+}
+
+.policy-chooser-element__normal-placeable-glow {
+	border-image-source: url("rect_card_placeable_hover");
+}
+
+.policy-chooser-element__crisis-placeable {
+	border-image-source: url("rect_crisis_placeable");
+}
+
+.policy-chooser-element__crisis-placeable-glow {
+	border-image-source: url("rect_crisis_hover_placeable");
+}
+
+.card-bg {
+	transition: opacity 0.25s cubic-bezier(0.215, 0.61, 0.355, 1);
+	border-image-slice: 45 84 fill;
+	border-image-width: pixels(45) pixels(84);
+	border-image-outset: pixels(42) pixels(57);
+}
+
+.crisis-image {
+	background-image: url("govt_crisis_icon");
+}
+
+.tradition-image {
+	background-image: url("govt_tradition_badge");
+}
+
+.communism-image {
+	background-image: url("govt_mini_comm");
+}
+
+.democracy-image {
+	background-image: url("govt_mini_demo");
+}
+
+.fascism-image {
+	background-image: url("govt_idea_faci");
+}
+
+.policies__crisis-progress-bar-inner {
+	background-image: url("govt_crisis_progress_fill");
+}
+
+.policies-open-slot-normal {
+	border-image-source: url("rect_card_empty");
+}
+
+.policies-open-slot-crisis {
+	border-image-source: url("rect_crisis_empty");
+}
+
+.policies__overview-happiness-meter-image {
+	background-image: url("celeb_happiness_icon");
+}
+
+.policies__overview-happiness-meter {
+
+	.fxs-ring-meter__ring-left,
+	.fxs-ring-meter__ring-right {
+		background-image: url("govt_happ_circle_rad");
+	}
+}
+
+.policies__overview-happiness-meter-circle {
+	background-image: url("hud_sub_circle_bk");
+}
+
+.policies-swap-arrow {
+	background-image: url("govt_switch_arrows");
+}
+
+.policies__overview-xy-container {
+	background: linear-gradient(0deg, theme.color('primary-4') 0%, theme.color('primary-5') 100%);
+	border-image: linear-gradient(0deg, theme.color('secondary-3') 0%, theme.color('secondary-2') 100%);
+	border-width: pixels(1);
+	border-style: solid;
+	border-image-slice: 1;
+	z-index: 2;
+}
+
+.policies__crisis-progress-bar {
+	width: pixels(1100);
+}
+
+.policies-column {
+	width: 48%;
+}
+
+.policies__overview-government-divider {
+	border-image: url("shell_line-divider");
+	border-image-slice: 1 0 1 1 fill;
+	border-image-width: pixels(1) 0 pixels(1) pixels(1);
+}
+
+.policies-open-slot-wide_half-bg {
+	border-image-source: url("rect_card_empty_half");
+	border-image-slice: 64 45 64 90 fill;
+	border-image-width: pixels(64) pixels(45) pixels(64) pixels(90);
+	border-image-outset: pixels(40) pixels(0) pixels(40) pixels(55);
+}
+
+.policy-card-body-text {
+	p {
+		text-align: center;
+	}
+}

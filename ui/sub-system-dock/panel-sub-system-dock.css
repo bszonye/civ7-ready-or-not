@@ -1,0 +1,280 @@
+/* DO NOT EDIT */
+/* Generated from panel-sub-system-dock.scss */
+.sub-system-dock {
+	position: relative;
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-start;
+	align-items: flex-end;
+	align-self: flex-end;
+	margin-top: 0.8888888889rem;
+}
+
+.sub-system-dock--button-container {
+	position: relative;
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-end;
+	align-items: flex-start;
+	padding-bottom: 1.3333333333rem;
+}
+
+.ssb__element {
+	width: 2.8888888889rem;
+	height: 2.8888888889rem;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 50%;
+}
+.ssb__element:last-child {
+	margin-right: 0;
+}
+.ssb__element.ssb__button {
+	margin: 0.3333333333rem;
+	margin-top: 0.5555555556rem;
+}
+.ssb__element.disabled {
+	pointer-events: none;
+}
+.ssb__element:hover .ssb__button-iconbg--hover {
+	opacity: 1;
+}
+.ssb__element:active .ssb__button-iconbg--active, .ssb__element:focus .ssb__button-iconbg--active {
+	opacity: 1;
+}
+.ssb__element:last-child {
+	margin-right: 0;
+}
+
+.ssb__element.agetimer {
+	width: 7.1111111111rem;
+	height: 7.1111111111rem;
+	margin: -0.8611111111rem;
+	margin-left: 1.1111111111rem;
+}
+
+.ssb__element.tech,
+.ssb__element.civic {
+	width: 7.1111111111rem;
+	height: 7.1111111111rem;
+	margin: -0.8611111111rem;
+}
+
+.ssb__element.agetimer .fxs-ring-meter__ring-left,
+.ssb__element.agetimer .fxs-ring-meter__ring-right {
+	background-image: url("fs://game/hud_age_circle_rad.png");
+}
+
+.ssb__element.tech .fxs-ring-meter__ring-left,
+.ssb__element.tech .fxs-ring-meter__ring-right {
+	background-image: url("fs://game/hud_tech_circle_rad.png");
+}
+
+.ssb__element.civic .fxs-ring-meter__ring-left,
+.ssb__element.civic .fxs-ring-meter__ring-right {
+	background-image: url("fs://game/hud_civic_circle_rad.png");
+}
+
+.ssb__texture-ring .fxs-ring-meter__ring-left {
+	background-size: cover;
+	background-position: left;
+}
+.ssb__texture-ring .fxs-ring-meter__ring-right {
+	background-size: cover;
+	background-position: right;
+}
+
+.ssb__button {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	pointer-events: auto;
+	width: 2.8888888889rem;
+	height: 2.8888888889rem;
+}
+.ssb__button.hud-select-potential:focus {
+	transform: scale(1.3);
+	z-index: 1;
+}
+.ssb__button.hud-select-potential:focus .ssb__button-highlight {
+	opacity: 0.875;
+}
+
+.ssb__button-iconbg.agetimer {
+	width: 7.1111111111rem;
+	height: 7.1111111111rem;
+	background-image: url("fs://game/hud_age_circle_bk.png");
+}
+
+.ssb__button-iconbg--idle.agetimer {
+	opacity: 0;
+	background-image: url("fs://game/hud_age_circle_bk.png");
+}
+
+.ssb__button-iconbg--hover.agetimer {
+	opacity: 0;
+	background-image: url("fs://game/hud_age_circle_hov.png");
+}
+
+.ssb__button-iconbg--active.agetimer {
+	opacity: 0;
+	background-image: url("fs://game/hud_age_circle_prs.png");
+}
+
+.ssb__button-iconbg--disabled.agetimer {
+	opacity: 0;
+	background-image: url("fs://game/hud_age_circle_dis.png");
+}
+
+.ssb__button-iconbg.tech {
+	width: 7.1111111111rem;
+	height: 7.1111111111rem;
+	background-image: url("fs://game/hud_tech_circle_bk.png");
+}
+
+.ssb__button-iconbg--idle.tech {
+	opacity: 0;
+	background-image: url("fs://game/hud_tech_circle_bk.png");
+}
+
+.ssb__button-iconbg--hover.tech {
+	opacity: 0;
+	background-image: url("fs://game/hud_tech_circle_hov.png");
+}
+
+.ssb__button-iconbg--active.tech {
+	opacity: 0;
+	background-image: url("fs://game/hud_tech_circle_prs.png");
+}
+
+.ssb__button-iconbg--disabled.tech {
+	opacity: 0;
+	background-image: url("fs://game/hud_tech_circle_dis.png");
+}
+
+.ssb__button-iconbg.civic {
+	width: 7.1111111111rem;
+	height: 7.1111111111rem;
+	background-image: url("fs://game/hud_civic_circle_bk.png");
+}
+
+.ssb__button-iconbg--idle.civic {
+	opacity: 0;
+	background-image: url("fs://game/hud_civic_circle_bk.png");
+}
+
+.ssb__button-iconbg--hover.civic {
+	opacity: 0;
+	background-image: url("fs://game/hud_civic_circle_hov.png");
+}
+
+.ssb__button-iconbg--active.civic {
+	opacity: 0;
+	background-image: url("fs://game/hud_civic_circle_prs.png");
+}
+
+.ssb__button-iconbg--disabled.civic {
+	opacity: 0;
+	background-image: url("fs://game/hud_civic_circle_dis.png");
+}
+
+.ssb__button-iconbg {
+	background-image: url("fs://game/hud_sub_circle_bk.png");
+}
+
+.ssb__button-iconbg--idle {
+	opacity: 0;
+	background-image: url("fs://game/hud_sub_circle_bk.png");
+}
+
+.ssb__button-iconbg--hover {
+	opacity: 0;
+	background-image: url("fs://game/hud_sub_circle_hov.png");
+}
+
+.ssb__button-iconbg--active {
+	opacity: 0;
+	background-image: url("fs://game/hud_sub_circle_prs.png");
+}
+
+.ssb__button-iconbg--disabled {
+	opacity: 0;
+	background-image: url("fs://game/hud_sub_circle_dis.png");
+}
+
+.ssb__button-iconbg {
+	position: absolute;
+	pointer-events: none;
+	width: 3.5555555556rem;
+	height: 3.5555555556rem;
+	background-size: contain;
+	background-repeat: no-repeat no-repeat;
+	background-position: center;
+	transition: opacity 0.25s cubic-bezier(0.215, 0.61, 0.355, 1);
+}
+
+.ssb__button-icon.agetimer {
+	background-image: url("fs://game/sub_agetimer.png");
+}
+
+.ssb__button-icon.tech {
+	background-image: url("fs://game/sub_tech.png");
+}
+
+.ssb__button-icon.civic {
+	background-image: url("fs://game/sub_civics.png");
+}
+
+.ssb__button-icon.gov {
+	background-image: url("fs://game/sub_govt.png");
+}
+
+.ssb__button-icon.religion {
+	background-image: url("fs://game/sub_religion.png");
+}
+
+.ssb__button-icon.resources {
+	background-image: url("fs://game/sub_resource.png");
+}
+
+.ssb__button-icon.greatworks {
+	background-image: url("fs://game/sub_greatworks.png");
+}
+
+.ssb__button-icon.unlocks {
+	background-image: url("fs://game/sub_unlock.png");
+}
+
+.ssb__button-icon.advanced-start {
+	background-image: url("fs://game/sub_advstart.png");
+}
+
+.ssb__button-icon {
+	position: absolute;
+	pointer-events: none;
+	width: 3.5555555556rem;
+	height: 3.5555555556rem;
+	background-position: 50% 50%;
+	background-size: contain;
+	background-repeat: no-repeat no-repeat;
+}
+
+.ssb-button__turn-counter {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	position: absolute;
+	pointer-events: auto;
+	left: 0;
+	right: 0;
+	bottom: 0.4444444444rem;
+	height: 0.8888888889rem;
+	text-align: center;
+}
+
+.ssb-button__turn-counter--hidden {
+	display: none;
+}
