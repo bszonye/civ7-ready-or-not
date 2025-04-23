@@ -201,15 +201,11 @@ export class bzSubSystemDock {
     }
     beforeAttach() { }
     afterAttach() {
-        engine.on('CityInitialized', this.cityInitializedListener);
-        engine.on('CultureNodeCompleted', this.onCivicCompleted, this);
-        engine.on('TraditionSlotsAdded', this.onPolicySlotsAdded, this);
+        this.Root.listenForEngineEvent('CityInitialized', this.cityInitializedListener);
+        this.Root.listenForEngineEvent('CultureNodeCompleted', this.onCivicCompleted, this);
+        this.Root.listenForEngineEvent('TraditionSlotsAdded', this.onPolicySlotsAdded, this);
     }
-    beforeDetach() {
-        engine.off('CityInitialized', this.cityInitializedListener);
-        engine.off('CultureNodeCompleted', this.onCivicCompleted, this);
-        engine.off('TraditionSlotsAdded', this.onPolicySlotsAdded, this);
-    }
+    beforeDetach() { }
     afterDetach() { }
     onAttributeChanged(_name, _prev, _next) { }
     onCityInitialized(data) {
