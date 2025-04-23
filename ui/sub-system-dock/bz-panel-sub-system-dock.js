@@ -32,7 +32,7 @@ const BZ_HEAD_STYLE = [
 }
 .ssb__element.bz-gov .fxs-ring-meter__ring-left,
 .ssb__element.bz-gov .fxs-ring-meter__ring-right {
-    background-image: url("fs://game/hud_age_circle_rad.png");
+    background-image: url("blp:hud_age_circle_rad");
     filter: grayscale(1) brightness(1.5) fxs-color-tint(${BZ_COLOR.ring});
 }
 .ssb__element.bz-gov.bz-celebration .fxs-ring-meter__ring-left,
@@ -40,7 +40,7 @@ const BZ_HEAD_STYLE = [
     filter: grayscale(1) brightness(2) fxs-color-tint(${BZ_COLOR.celebration});
 }
 .bz-gov .ssb__button-icon {
-    background-image: url("fs://game/sub_govt.png");
+    background-image: url("blp:sub_govt");
 }
 .bz-gov .ssb-button__turn-counter {
     top: 2.6111111111rem;
@@ -201,15 +201,11 @@ export class bzSubSystemDock {
     }
     beforeAttach() { }
     afterAttach() {
-        engine.on('CityInitialized', this.cityInitializedListener);
-        engine.on('CultureNodeCompleted', this.onCivicCompleted, this);
-        engine.on('TraditionSlotsAdded', this.onPolicySlotsAdded, this);
+        this.Root.listenForEngineEvent('CityInitialized', this.cityInitializedListener);
+        this.Root.listenForEngineEvent('CultureNodeCompleted', this.onCivicCompleted, this);
+        this.Root.listenForEngineEvent('TraditionSlotsAdded', this.onPolicySlotsAdded, this);
     }
-    beforeDetach() {
-        engine.off('CityInitialized', this.cityInitializedListener);
-        engine.off('CultureNodeCompleted', this.onCivicCompleted, this);
-        engine.off('TraditionSlotsAdded', this.onPolicySlotsAdded, this);
-    }
+    beforeDetach() { }
     afterDetach() { }
     onAttributeChanged(_name, _prev, _next) { }
     onCityInitialized(data) {
