@@ -78,6 +78,7 @@ export class bzSubSystemDock {
         this.govRing = null;
         this.govTurnCounter = null;
         this.cityInitializedListener = this.onCityInitialized.bind(this);
+        this.tradeRouteListener = this.onTradeRouteUpdates.bind(this);
         this.patchPrototypes(this.component);
     }
     patchPrototypes(component) {
@@ -202,6 +203,9 @@ export class bzSubSystemDock {
     beforeAttach() { }
     afterAttach() {
         this.Root.listenForEngineEvent('CityInitialized', this.cityInitializedListener);
+        this.Root.listenForEngineEvent('TradeRouteAddedToMap', this.tradeRouteListener);
+        this.Root.listenForEngineEvent('TradeRouteRemovedFromMap', this.tradeRouteListener);
+        this.Root.listenForEngineEvent('TradeRouteChanged', this.tradeRouteListener);
         this.Root.listenForEngineEvent('CultureNodeCompleted', this.onCivicCompleted, this);
         this.Root.listenForEngineEvent('TraditionSlotsAdded', this.onPolicySlotsAdded, this);
     }
@@ -211,6 +215,10 @@ export class bzSubSystemDock {
     onCityInitialized(data) {
         // update resources after building or conquering a settlement
         if (data.cityID.owner != GameContext.localPlayerID) return;
+        this.updateResourcesButton();
+    }
+    onTradeRouteUpdates() {
+        // update resources after trade route changes
         this.updateResourcesButton();
     }
     onCivicCompleted(data) {
