@@ -1,4 +1,4 @@
-# Ready or Not 1.2.1
+# Ready or Not 1.2.2
 better system buttons
 
 are your social policies ready for a change?
