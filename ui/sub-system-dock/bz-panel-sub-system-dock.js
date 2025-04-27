@@ -156,7 +156,7 @@ export class bzSubSystemDock {
     updateGovButton() {
         if (!this.govButton) return;  // not ready yet
         const player = Players.get(GameContext.localPlayerID);
-        if (player == null) return; // autoplaying
+        if (!player) return;  // autoplaying
         const isCelebration = player.Happiness?.isInGoldenAge() ?? false;
         this.govRing.classList.toggle('bz-celebration', isCelebration);
         const isReady = player.Culture?.canSwapNormalTraditions ?? false;
@@ -194,11 +194,11 @@ export class bzSubSystemDock {
         this.govRing.setAttribute('value', (progress * 100).toString());
     }
     updateResourcesButton() {
+        if (!this.resourcesButton) return;  // not ready yet
         const player = Players.get(GameContext.localPlayerID);
-        if (this.resourcesButton) {
-            const isReady = !(player.Resources?.isRessourceAssignmentLocked() ?? true);
-            this.resourcesButton.classList.toggle('bz-ready', isReady);
-        }
+        if (!player) return;  // autoplaying
+        const isReady = !(player.Resources?.isRessourceAssignmentLocked() ?? true);
+        this.resourcesButton.classList.toggle('bz-ready', isReady);
     }
     beforeAttach() { }
     afterAttach() {
