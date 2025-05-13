@@ -1,3 +1,4 @@
+// TODO: normalize dimensions to 1/18rem
 const BZ_HEAD_STYLE = [
 `
 .policies__overview-happiness-meter-circle  {
