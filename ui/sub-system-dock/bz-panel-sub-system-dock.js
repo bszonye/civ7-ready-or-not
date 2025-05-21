@@ -8,7 +8,7 @@ const BZ_HEAD_STYLE = [
 `
 .bz-ready .ssb__button-icon {
     top: -0.1111111111rem;
-    left: -0.0138888889rem;
+    left: -0.0138888889rem;  /* TODO: quarter pixel */
     width: 3rem;
     height: 3rem;
 }
@@ -29,7 +29,7 @@ const BZ_HEAD_STYLE = [
     width: 4.8888888889rem;
     height: 4.8888888889rem;
     top: -1.0555555556rem;
-    left: -0.9166666667rem;
+    left: -0.9166666667rem;  /* TODO: half pixel */
 }
 .ssb__element.bz-gov .fxs-ring-meter__ring-left,
 .ssb__element.bz-gov .fxs-ring-meter__ring-right {
