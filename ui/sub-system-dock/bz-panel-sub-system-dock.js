@@ -3,7 +3,6 @@ const BZ_COLOR = {
     celebration: "#cfba6a",
     ring: "#b5afa9",
 };
-// TODO: normalize dimensions to 1/18rem
 const BZ_HEAD_STYLE = [
 `
 .bz-ready .ssb__button-icon {
