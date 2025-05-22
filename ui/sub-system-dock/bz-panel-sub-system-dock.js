@@ -7,7 +7,7 @@ const BZ_HEAD_STYLE = [
 `
 .bz-ready .ssb__button-icon {
     top: -0.1111111111rem;
-    left: -0.0138888889rem;
+    left: 0;
     width: 3rem;
     height: 3rem;
 }
@@ -28,7 +28,7 @@ const BZ_HEAD_STYLE = [
     width: 4.8888888889rem;
     height: 4.8888888889rem;
     top: -1.0555555556rem;
-    left: -0.9166666667rem;
+    left: -0.9444444444rem;
 }
 .ssb__element.bz-gov .fxs-ring-meter__ring-left,
 .ssb__element.bz-gov .fxs-ring-meter__ring-right {
@@ -156,7 +156,7 @@ export class bzSubSystemDock {
     updateGovButton() {
         if (!this.govButton) return;  // not ready yet
         const player = Players.get(GameContext.localPlayerID);
-        if (player == null) return; // autoplaying
+        if (!player) return;  // autoplaying
         const isCelebration = player.Happiness?.isInGoldenAge() ?? false;
         this.govRing.classList.toggle('bz-celebration', isCelebration);
         const isReady = player.Culture?.canSwapNormalTraditions ?? false;
@@ -194,11 +194,11 @@ export class bzSubSystemDock {
         this.govRing.setAttribute('value', (progress * 100).toString());
     }
     updateResourcesButton() {
+        if (!this.resourcesButton) return;  // not ready yet
         const player = Players.get(GameContext.localPlayerID);
-        if (this.resourcesButton) {
-            const isReady = !(player.Resources?.isRessourceAssignmentLocked() ?? true);
-            this.resourcesButton.classList.toggle('bz-ready', isReady);
-        }
+        if (!player) return;  // autoplaying
+        const isReady = !(player.Resources?.isRessourceAssignmentLocked() ?? true);
+        this.resourcesButton.classList.toggle('bz-ready', isReady);
     }
     beforeAttach() { }
     afterAttach() {
