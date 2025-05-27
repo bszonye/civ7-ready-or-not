@@ -105,7 +105,6 @@ export class ScreenPolicies extends Panel {
         this.overviewWindow = MustGetElement(".policies__overview", this.Root);
         this.policiesWindow = MustGetElement(".policies__policies", this.Root);
         this.crisisWindow = MustGetElement(".policies__crisis", this.Root);
-        this.overviewScrollable = MustGetElement(".policies__overview-scrollable", this.Root);
         this.activeNormalPolicyScrollable = MustGetElement(".policies_policies-active-scrollable", this.Root);
         this.activeCrisisPolicyScrollable = MustGetElement(".policies_crisis-active-scrollable", this.Root);
         this.availableNormalPolicyScrollable = MustGetElement(".policies_policies-available-scrollable", this.Root);
@@ -119,9 +118,6 @@ export class ScreenPolicies extends Panel {
         PoliciesData.update();
         const closeButton = MustGetElement("fxs-close-button", this.Root);
         closeButton.addEventListener('action-activate', () => {
-            this.close();
-        });
-        Panel.addEngineCloseEvent(this.Root.typeName, () => {
             this.close();
         });
         this.localPlayer = Players.get(GameContext.localPlayerID);
@@ -151,12 +147,9 @@ export class ScreenPolicies extends Panel {
         this.buildOverviewWindow();
         this.buildPolicyWindow();
         this.buildCrisisWindow();
-        this.overviewScrollable.componentCreatedEvent.on(scrollable => scrollable.setEngineInputProxy(this.Root));
-        tabsContainer.addEventListener("tab-selected", this.onPolicyTabSelectedListener);
         Databind.classToggle(this.confirmButtonContainer, 'hidden', `g_NavTray.isTrayRequired`);
     }
     onDetach() {
-        Panel.removeEngineCloseEvent(this.Root.typeName);
         this.Root.removeEventListener(InputEngineEventName, this.engineInputListener);
         this.Root.removeEventListener(NavigateInputEventName, this.navigateInputListener);
         this.confirmButton.removeEventListener('action-activate', this.confirmButtonListener);
@@ -199,10 +192,12 @@ export class ScreenPolicies extends Panel {
             }
             this.initialSetupDone = true;
         }
+        const tabsContainer = MustGetElement("fxs-tab-bar", this.Root);
+        tabsContainer.addEventListener("tab-selected", this.onPolicyTabSelectedListener);
     }
     focusOverviewWindow() {
         this.refreshOverviewPolicies();
-        FocusManager.setFocus(this.overviewWindow);
+        FocusManager.setFocus(MustGetElement(".policies__overview-normal-section", this.overviewWindow));
         this.confirmButton.classList.add("hidden");
     }
     focusPoliciesWindow() {
@@ -1015,4 +1010,5 @@ Controls.define('screen-policies', {
     content: ['fs://game/base-standard/ui/policies/screen-policies.html'],
     tabIndex: -1
 });
+
 //# sourceMappingURL=file:///base-standard/ui/policies/screen-policies.js.map

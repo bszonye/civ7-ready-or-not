@@ -12,7 +12,6 @@ import { TabItem, TabSelectedEvent } from '/core/ui/components/fxs-tab-bar.js';
 import { PolicyChooserNode, PolicyChooserItem, PolicyChooserItemIcon } from './policy-chooser-item.js';
 import FocusManager from '/core/ui/input/focus-manager.js';
 import { utils } from '/core/ui/graph-layout/utils.js';
-import { FxsScrollable } from '/core/ui/components/fxs-scrollable.js';
 import NavTray from '/core/ui/navigation-tray/model-navigation-tray.js';
 import Databind from '/core/ui/utilities/utilities-core-databinding.js';
 import { Audio } from '/core/ui/audio-base/audio-support.js';
@@ -70,7 +69,6 @@ export class ScreenPolicies extends Panel {
 	private confirmButton!: HTMLElement;
 	private confirmButtonContainer!: HTMLElement;
 
-	private overviewScrollable!: ComponentRoot<FxsScrollable>;
 	private activeNormalPolicyScrollable!: HTMLElement;
 	private activeCrisisPolicyScrollable!: HTMLElement;
 	private availableNormalPolicyScrollable!: HTMLElement;
@@ -127,7 +125,6 @@ export class ScreenPolicies extends Panel {
 		this.overviewWindow = MustGetElement(".policies__overview", this.Root);
 		this.policiesWindow = MustGetElement(".policies__policies", this.Root);
 		this.crisisWindow = MustGetElement(".policies__crisis", this.Root);
-		this.overviewScrollable = MustGetElement(".policies__overview-scrollable", this.Root);
 		this.activeNormalPolicyScrollable = MustGetElement(".policies_policies-active-scrollable", this.Root);
 		this.activeCrisisPolicyScrollable = MustGetElement(".policies_crisis-active-scrollable", this.Root);
 		this.availableNormalPolicyScrollable = MustGetElement(".policies_policies-available-scrollable", this.Root);
@@ -143,10 +140,6 @@ export class ScreenPolicies extends Panel {
 
 		const closeButton = MustGetElement("fxs-close-button", this.Root);
 		closeButton.addEventListener('action-activate', () => {
-			this.close();
-		});
-
-		Panel.addEngineCloseEvent(this.Root.typeName, () => {
 			this.close();
 		});
 
@@ -187,16 +180,10 @@ export class ScreenPolicies extends Panel {
 		this.buildPolicyWindow();
 		this.buildCrisisWindow();
 
-		this.overviewScrollable.componentCreatedEvent.on(scrollable => scrollable.setEngineInputProxy(this.Root));
-
-		tabsContainer.addEventListener("tab-selected", this.onPolicyTabSelectedListener);
-
 		Databind.classToggle(this.confirmButtonContainer, 'hidden', `g_NavTray.isTrayRequired`);
 	}
 
 	onDetach() {
-		Panel.removeEngineCloseEvent(this.Root.typeName);
-
 		this.Root.removeEventListener(InputEngineEventName, this.engineInputListener);
 		this.Root.removeEventListener(NavigateInputEventName, this.navigateInputListener);
 		this.confirmButton.removeEventListener('action-activate', this.confirmButtonListener);
@@ -243,11 +230,13 @@ export class ScreenPolicies extends Panel {
 			}
 			this.initialSetupDone = true;
 		}
+		const tabsContainer = MustGetElement("fxs-tab-bar", this.Root);
+		tabsContainer.addEventListener("tab-selected", this.onPolicyTabSelectedListener);
 	}
 
 	private focusOverviewWindow() {
 		this.refreshOverviewPolicies()
-		FocusManager.setFocus(this.overviewWindow);
+		FocusManager.setFocus(MustGetElement(".policies__overview-normal-section", this.overviewWindow));
 		this.confirmButton.classList.add("hidden");
 	}
 

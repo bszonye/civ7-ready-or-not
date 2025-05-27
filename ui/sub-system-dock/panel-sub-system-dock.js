@@ -665,14 +665,14 @@ class PanelSubSystemDock extends Panel {
                 return "panel-belief-picker";
             }
         }
-        else {
-            console.error("panel-sub-system-dock: openReligionViewer() - religion button pressed during an age that is neither Exploration nor Antiquity!");
-        }
         return;
     }
     openReligionViewer() {
         const screen = this.getReligionScreenName();
         if (screen) {
+            if (Game.age == Database.makeHash("AGE_MODERN")) {
+                console.error("panel-sub-system-dock: openReligionViewer() - religion button pressed during an age that is neither Exploration nor Antiquity!");
+            }
             ContextManager.push(screen, { singleton: true });
         }
     }

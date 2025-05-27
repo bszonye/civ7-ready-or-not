@@ -160,3 +160,7 @@
 .policy-card-body-text p {
 	text-align: center;
 }
+
+.policies__tab-bar {
+	width: 66.6666666667rem;
+}
