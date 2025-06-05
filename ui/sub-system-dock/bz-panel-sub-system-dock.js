@@ -206,6 +206,7 @@ export class bzSubSystemDock {
         this.Root.listenForEngineEvent('TradeRouteAddedToMap', this.tradeRouteListener);
         this.Root.listenForEngineEvent('TradeRouteRemovedFromMap', this.tradeRouteListener);
         this.Root.listenForEngineEvent('TradeRouteChanged', this.tradeRouteListener);
+        this.Root.listenForEngineEvent('TraditionChanged', this.onPolicyChanged, this);
         this.Root.listenForEngineEvent('CultureNodeCompleted', this.onCivicCompleted, this);
         this.Root.listenForEngineEvent('TraditionSlotsAdded', this.onPolicySlotsAdded, this);
     }
@@ -219,6 +220,11 @@ export class bzSubSystemDock {
     }
     onTradeRouteUpdates() {
         // update resources after trade route changes
+        this.updateResourcesButton();
+    }
+    onPolicyChanged(data) {
+        // update resources after changing policies (like Metropole)
+        if (data.player && data.player != GameContext.localPlayerID) return;
         this.updateResourcesButton();
     }
     onCivicCompleted(data) {
