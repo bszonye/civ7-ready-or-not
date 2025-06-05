@@ -124,6 +124,13 @@ export class bzSubSystemDock {
         // this.component.policiesButton = this.govRing;
         this.updateGovButton();
         this.updateResourcesButton();
+        // refresh buttons when activated, to catch missed events
+        this.govButton.addEventListener('action-activate', (_event) => {
+            this.updateGovButton();
+        });
+        this.resourcesButton.addEventListener('action-activate', (_event) => {
+            this.updateResourcesButton();
+        });
     }
     afterUpdateButtonTimers() {
         this.updateGovButton();
