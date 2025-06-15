@@ -189,16 +189,20 @@ export class bzSubSystemDock {
             turnsLeft = player.Happiness.getGoldenAgeTurnsLeft();
             progress = turnsLeft / duration;
             tooltip.push(Locale.compose(etext, turnsLeft));
-            const goldenAge = getCurrentGoldenAge(player);
-            if (goldenAge) {
-                const description = Locale.compose(goldenAge.Description, duration);
-                tooltip.push(`[b]${description}[/b]`);
-            }
             // also show turns to next celebration
             if (0 <= nextTurnsLeft) {
                 const next = Locale.compose(stext, Math.max(nextTurnsLeft, turnsLeft));
-                // replace "View Your Social Policies" with a blank line
-                tooltip.push(' ', next.split('[n]').at(-1));
+                // remove redundant "View Your Social Policies" line
+                tooltip.push(next.split('[n]').at(-1));
+            }
+            // show current celebration type and bonus
+            const goldenAge = getCurrentGoldenAge(player);
+            if (goldenAge) {
+                const gtype = goldenAge.GoldenAgeType;
+                const icon = gtype ? `[icon:${gtype}] ` : '';
+                console.warn(`TRIX ${icon}`);
+                const description = Locale.compose(goldenAge.Description, duration);
+                tooltip.push(`${icon}[b]${description}[/b]`);
             }
         } else {
             // show progress to next celebration
