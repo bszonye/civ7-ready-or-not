@@ -16,6 +16,7 @@ export default [
         languageOptions: {
             globals: {
                 Cities: "readonly",
+                Configuration: "readonly",
                 Constructibles: "readonly",
                 Controls: "readonly",
                 CustomEvent: "readonly",
@@ -23,6 +24,7 @@ export default [
                 GameContext: "readonly",
                 GameInfo: "readonly",
                 GameplayMap: "readonly",
+                GlobalParameters: "readonly",
                 GrowthTypes: "readonly",
                 IndependentRelationship: "readonly",
                 Locale: "readonly",
