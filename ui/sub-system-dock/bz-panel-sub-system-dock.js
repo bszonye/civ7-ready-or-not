@@ -177,7 +177,6 @@ export class bzSubSystemDock {
         const hleft = Math.max(0, hspan - hdone);
         const nextProgress = Math.min(hdone / hspan, 1);
         const nextTurnsLeft = hyield ? Math.ceil(hleft / hyield) : -1;
-        console.warn(`TRIX ${hspan} ${hdone} ${hleft} ${nextProgress} ${nextTurnsLeft}`);
         // create tooltip
         let turnsLeft = 0;
         let progress = 0;
@@ -185,7 +184,7 @@ export class bzSubSystemDock {
         const stext = "LOC_SUB_SYSTEM_TRADITIONS_TURNS_UNTIL_CELEBRATION_START";
         const etext = "LOC_SUB_SYSTEM_TRADITIONS_TURNS_UNTIL_CELEBRATION_END";
         if (isCelebration) {
-            // show celebration countdown
+            // show current celebration countdown
             const duration = player.Happiness.getGoldenAgeDuration();
             turnsLeft = player.Happiness.getGoldenAgeTurnsLeft();
             progress = turnsLeft / duration;
@@ -198,11 +197,10 @@ export class bzSubSystemDock {
             // also show turns to next celebration
             if (0 <= nextTurnsLeft) {
                 const next = Locale.compose(stext, Math.max(nextTurnsLeft, turnsLeft));
-                console.warn(`TRIX ${next}`);
+                // replace "View Your Social Policies" with a blank line
                 tooltip.push(' ', next.split('[n]').at(-1));
             }
-        }
-        else {
+        } else {
             // show progress to next celebration
             progress = nextProgress;
             turnsLeft = nextTurnsLeft;
