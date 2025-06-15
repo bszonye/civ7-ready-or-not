@@ -194,7 +194,7 @@ export class bzSubSystemDock {
         }
         // show turns to next celebration (first)
         const stext = "LOC_SUB_SYSTEM_TRADITIONS_TURNS_UNTIL_CELEBRATION_START";
-        tooltip.unshift(Locale.compose(stext, turnsLeft));
+        tooltip.unshift(Locale.compose(stext, Math.max(turnsLeft, nextTurnsLeft)));
         // show policy change status
         if (isReady) tooltip.push(' ', Locale.compose("LOC_UI_POLICIES_CAN_SWAP"));
         // update progress meter & turn counter
