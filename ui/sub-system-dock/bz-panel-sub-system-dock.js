@@ -1,4 +1,4 @@
-import { getGoldenAgeInfo, getCurrentGoldenAge } from '/bz-ready-or-not/ui/policies/bz-screen-policies.js';
+import { getGoldenAgeInfo } from '/bz-ready-or-not/ui/policies/bz-screen-policies.js';
 const BZ_COLOR = {
     celebration: "#cfba6a",
     ring: "#b5afa9",
@@ -168,48 +168,34 @@ export class bzSubSystemDock {
         this.govRing.classList.toggle('bz-celebration', isCelebration);
         const isReady = player.Culture?.canSwapNormalTraditions ?? false;
         this.govButton.classList.toggle('bz-ready', isReady);
-        const info = getGoldenAgeInfo(player);
+        const ginfo = getGoldenAgeInfo(player);
         const hyield = player.Stats.getNetYield(YieldTypes.YIELD_HAPPINESS) ?? 0;
         const htotal = player.Stats.getLifetimeYield(YieldTypes.YIELD_HAPPINESS) ?? 0;
         // calculate happiness needed, earned, and remaining
-        const hspan = info.threshold.next - info.threshold.last;
-        const hdone = Math.max(0, htotal - info.threshold.last);
+        const hspan = ginfo.threshold.next - ginfo.threshold.last;
+        const hdone = Math.max(0, htotal - ginfo.threshold.last);
         const hleft = Math.max(0, hspan - hdone);
         const nextProgress = Math.min(hdone / hspan, 1);
-        const nextTurnsLeft = hyield ? Math.ceil(hleft / hyield) : -1;
+        const nextTurnsLeft = hyield ? Math.ceil(hleft / hyield) : 0;
         // create tooltip
-        let turnsLeft = 0;
-        let progress = 0;
+        let turnsLeft = nextTurnsLeft;
+        let progress = nextProgress;
         const tooltip = [];
-        const stext = "LOC_SUB_SYSTEM_TRADITIONS_TURNS_UNTIL_CELEBRATION_START";
-        const etext = "LOC_SUB_SYSTEM_TRADITIONS_TURNS_UNTIL_CELEBRATION_END";
+        // show celebration type
         if (isCelebration) {
-            // show current celebration countdown
             const duration = player.Happiness.getGoldenAgeDuration();
             turnsLeft = player.Happiness.getGoldenAgeTurnsLeft();
             progress = turnsLeft / duration;
-            tooltip.push(Locale.compose(etext, turnsLeft));
-            // also show turns to next celebration
-            if (0 <= nextTurnsLeft) {
-                const next = Locale.compose(stext, Math.max(nextTurnsLeft, turnsLeft));
-                // remove redundant "View Your Social Policies" line
-                tooltip.push(next.split('[n]').at(-1));
-            }
             // show current celebration type and bonus
-            const goldenAge = getCurrentGoldenAge(player);
-            if (goldenAge) {
-                const gtype = goldenAge.GoldenAgeType;
-                const icon = gtype ? `[icon:${gtype}] ` : '';
-                console.warn(`TRIX ${icon}`);
-                const description = Locale.compose(goldenAge.Description, duration);
-                tooltip.push(`${icon}[b]${description}[/b]`);
+            if (ginfo.current) {
+                const current = Locale.compose(ginfo.current.Description, turnsLeft);
+                tooltip.push(' ', current);
             }
-        } else {
-            // show progress to next celebration
-            progress = nextProgress;
-            turnsLeft = nextTurnsLeft;
-            tooltip.push(Locale.compose(stext, turnsLeft));
         }
+        // show turns to next celebration (first)
+        const stext = "LOC_SUB_SYSTEM_TRADITIONS_TURNS_UNTIL_CELEBRATION_START";
+        tooltip.unshift(Locale.compose(stext, turnsLeft));
+        // show policy change status
         if (isReady) tooltip.push(' ', Locale.compose("LOC_UI_POLICIES_CAN_SWAP"));
         // update progress meter & turn counter
         this.govButton.setAttribute("data-tooltip-content", tooltip.join('[n]'));

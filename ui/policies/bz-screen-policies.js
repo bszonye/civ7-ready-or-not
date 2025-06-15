@@ -96,14 +96,11 @@ export function getGoldenAgeInfo(player) {
         info.threshold.last = getGoldenAgeThreshold(earned);
         info.threshold.next = next ?? getGoldenAgeThreshold(earned + 1);
     }
+    // get the current celebration object
+    info.current = pending ?
+        { Description: "LOC_NOTIFICATION_CHOOSE_GOLDEN_AGE_MESSAGE" } :
+        GameInfo.GoldenAges[parseInt(info.m_eCurrentGoldenAge)];
     return info;
-}
-export function getCurrentGoldenAge(player) {
-    const info = getGoldenAgeInfo(player);
-    if (info.IsGoldenAgeChoiceRequired) {
-        return { Description: "LOC_NOTIFICATION_CHOOSE_GOLDEN_AGE_MESSAGE" };
-    }
-    return GameInfo.GoldenAges[parseInt(info.m_eCurrentGoldenAge)];
 }
 class bzScreenPolicies {
     constructor(component) {
@@ -119,7 +116,7 @@ class bzScreenPolicies {
         this.overviewWindow = this.component.overviewWindow;
         // get the icon for the current celebration, if any
         const gtype = this.localPlayer.Happiness?.isInGoldenAge() ?
-            getCurrentGoldenAge(this.localPlayer)?.GoldenAgeType ?? null :
+            getGoldenAgeInfo(this.localPlayer)?.current?.GoldenAgeType ?? null :
             null;
         const icon = this.overviewWindow.querySelector(".policies__overview-happiness-meter-image");
         icon.style.backgroundImage = gtype ?
