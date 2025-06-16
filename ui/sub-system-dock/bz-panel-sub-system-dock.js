@@ -181,19 +181,25 @@ export class bzSubSystemDock {
         let turnsLeft = nextTurnsLeft;
         let progress = nextProgress;
         const tooltip = [];
+        const stext = "LOC_SUB_SYSTEM_TRADITIONS_TURNS_UNTIL_CELEBRATION_START";
+        const etext = "LOC_SUB_SYSTEM_TRADITIONS_TURNS_UNTIL_CELEBRATION_END";
         // show celebration type
         if (isCelebration) {
             const duration = player.Happiness.getGoldenAgeDuration();
             turnsLeft = player.Happiness.getGoldenAgeTurnsLeft();
             progress = turnsLeft / duration;
-            // show current celebration type and bonus
             if (ginfo.current) {
-                const current = Locale.compose(ginfo.current.Description, turnsLeft);
-                tooltip.push(' ', current);
+                // show current celebration type and bonus
+                const gtext = Locale.compose(ginfo.current.Description, turnsLeft);
+                tooltip.push(' ', gtext);
+            } else {
+                // use the generic celebration countdown as a fallback,
+                // but skip the "View Your Social Policies" line
+                const lines = Locale.compose(etext, turnsLeft).split('[n]');
+                tooltip.push(lines.at(-1));
             }
         }
         // show turns to next celebration (first)
-        const stext = "LOC_SUB_SYSTEM_TRADITIONS_TURNS_UNTIL_CELEBRATION_START";
         tooltip.unshift(Locale.compose(stext, Math.max(turnsLeft, nextTurnsLeft)));
         // show policy change status
         if (isReady) tooltip.push(' ', Locale.compose("LOC_UI_POLICIES_CAN_SWAP"));

@@ -95,11 +95,14 @@ export function getGoldenAgeInfo(player) {
     } else {
         info.threshold.last = getGoldenAgeThreshold(earned);
         info.threshold.next = next ?? getGoldenAgeThreshold(earned + 1);
+        if (info.IsInGoldenAge) {
+            info.current = GameInfo.GoldenAges[info.CurrentGoldenAge];
+        }
     }
-    // get the current celebration object
-    info.current = pending ?
-        { Description: "LOC_NOTIFICATION_CHOOSE_GOLDEN_AGE_MESSAGE" } :
-        GameInfo.GoldenAges[parseInt(info.m_eCurrentGoldenAge)];
+    for (const [key, value] of Object.entries(info)) {
+        if (key.startsWith('m_')) continue;
+        console.warn(`TRIX info[${key}] = ${JSON.stringify(value)}`);
+    }
     return info;
 }
 class bzScreenPolicies {
