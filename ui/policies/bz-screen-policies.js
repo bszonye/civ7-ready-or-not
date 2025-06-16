@@ -99,10 +99,6 @@ export function getGoldenAgeInfo(player) {
             info.current = GameInfo.GoldenAges[info.CurrentGoldenAge];
         }
     }
-    for (const [key, value] of Object.entries(info)) {
-        if (key.startsWith('m_')) continue;
-        console.warn(`TRIX info[${key}] = ${JSON.stringify(value)}`);
-    }
     return info;
 }
 class bzScreenPolicies {
