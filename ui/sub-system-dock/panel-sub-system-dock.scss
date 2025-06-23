@@ -21,6 +21,15 @@
 	padding-bottom: pixels(24);
 }
 
+.sub-system-dock--golden-age-ring {
+	background-image: url('blp:hud_sub_golden');
+}
+
+.sub-system-dock--golden-age-timer-bg {
+	bottom: pixels(-68);
+	background-color: rgba(40, 40, 40, 0.5);
+}
+
 // these values are taken from the figma designs,
 // buttons have an outer size which includes the shadow, inner size is the interactable area
 $age-button-size: 128;

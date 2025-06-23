@@ -19,6 +19,15 @@
 	padding-bottom: 1.3333333333rem;
 }
 
+.sub-system-dock--golden-age-ring {
+	background-image: url("blp:hud_sub_golden");
+}
+
+.sub-system-dock--golden-age-timer-bg {
+	bottom: -3.7777777778rem;
+	background-color: rgba(40, 40, 40, 0.5);
+}
+
 .ssb__element {
 	width: 2.8888888889rem;
 	height: 2.8888888889rem;

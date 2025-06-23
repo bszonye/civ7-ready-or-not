@@ -1,18 +1,18 @@
 /**
  * @file panel-sub-system-dock.ts
- * @copyright 2020-2024, Firaxis Games
+ * @copyright 2020-2025, Firaxis Games
  * @description A dock of sub-system launchers.
  */
 
-//import { InterfaceMode } from '/core/ui/interface-modes/interface-modes.js'
 import ContextManager from '/core/ui/context-manager/context-manager.js';
 import FocusManager from '/core/ui/input/focus-manager.js';
 import Panel, { AnchorType } from '/core/ui/panel-support.js';
 import FxsRingMeter from '/core/ui/components/fxs-ring-meter.js';
-import { CrisisMeter } from '/base-standard/ui/crisis-meter/crisis-meter.js';
 import FxsActivatable, { ActionActivateEvent } from '/core/ui/components/fxs-activatable.js'
 import DialogManager from '/core/ui/dialog-box/manager-dialog-box.js'
 import { Icon } from '/core/ui/utilities/utilities-image.js';
+
+import { CrisisMeter } from '/base-standard/ui/crisis-meter/crisis-meter.js';
 
 /**
  * What needs to be defined for each button
@@ -61,6 +61,9 @@ class PanelSubSystemDock extends Panel {
 	private techRing: ComponentRoot<FxsRingMeter> | null = null;
 	private techTurnCounter: HTMLDivElement | null = null;
 
+	private goldenAgeCrown!: HTMLDivElement;
+	private goldenAgeTurns!: HTMLDivElement;
+
 	private policiesButton: ComponentRoot<FxsActivatable> | null = null;
 
 	private resourcesButton: ComponentRoot<FxsActivatable> | null = null;
@@ -78,8 +81,7 @@ class PanelSubSystemDock extends Panel {
 		fragment.appendChild(this.buttonContainer);
 		this.animateInType = this.animateOutType = AnchorType.Fade;
 
-		const isExtendedGame = Game.AgeProgressManager.isExtendedGame;
-		if (isExtendedGame) {
+		if (this.ageNeverEnds) {
 			const ageElements = this.addRingButton({
 				useCrisisMeter: false,
 				tooltip: "LOC_UI_VICTORY_PROGRESS",
@@ -139,6 +141,19 @@ class PanelSubSystemDock extends Panel {
 		this.cultureTurnCounter = cultureElements.turnCounter;
 
 		this.policiesButton = this.addButton({ tooltip: "LOC_UI_VIEW_TRADITIONS", modifierClass: 'gov', callback: this.onOpenPolicies.bind(this), class: "tut-traditions", audio: "government", focusedAudio: "data-audio-focus-small" });
+		this.goldenAgeCrown = document.createElement("div");
+		this.goldenAgeCrown.classList.add("sub-system-dock--golden-age-ring", "absolute", "-inset-4", "bg-no-repeat", "bg-cover", "hidden");
+
+		const turnsBG = document.createElement("div");
+		turnsBG.classList.add("sub-system-dock--golden-age-timer-bg", "relative", "w-7", "self-center");
+
+		this.goldenAgeTurns = document.createElement("div");
+		this.goldenAgeTurns.classList.add("sub-system-dock--golden-age-timer", "relative", "font-title-base", "text-shadow", "self-center");
+
+		turnsBG.appendChild(this.goldenAgeTurns);
+		this.goldenAgeCrown.appendChild(turnsBG);
+		this.policiesButton.appendChild(this.goldenAgeCrown);
+
 		this.resourcesButton = this.addButton({ tooltip: "LOC_UI_VIEW_RESOURCE_ALLOCATION", modifierClass: 'resources', callback: this.onOpenResourceAllocation.bind(this), class: "tut-trade", audio: "resources", focusedAudio: "data-audio-focus-small" });
 		this.addButton({ tooltip: "LOC_UI_VIEW_GREAT_WORKS", modifierClass: 'greatworks', callback: this.onOpenGreatWorks.bind(this), class: "tut-great-works", audio: "great-works", focusedAudio: "data-audio-focus-small" });
 		if (Game.age != Database.makeHash("AGE_MODERN")) {
@@ -169,47 +184,34 @@ class PanelSubSystemDock extends Panel {
 		this.Root.listenForEngineEvent('CultureTargetChanged', this.onCultureTargetUpdated, this);
 		this.Root.listenForEngineEvent('CultureNodeCompleted', this.onCultureUpdated, this);
 		this.Root.listenForEngineEvent('AgeProgressionChanged', this.updateAgeProgression, this);
+		this.Root.listenForEngineEvent('PlayerGoldenAgeChanged', this.onGoldenAgeChanged, this);
 
 		this.Root.listenForEngineEvent('ResourceAssigned', this.updateResourcesButton, this);
 		this.Root.listenForEngineEvent('PlotOwnershipChanged', this.updateResourcesButton, this);
 
 		this.Root.listenForEngineEvent('GameExtended', this.onGameExtended, this);
-
-		const religionName = this.getReligionScreenName();
-
-		if (religionName) {
-			Panel.addEngineOpenEvent(religionName, () => {
-				this.openReligionViewer();
-			});
-		}
-
-		Panel.addEngineOpenEvent('screen-culture-tree-chooser', this.openCultureChooser);
-		Panel.addEngineOpenEvent('screen-victory-progress', this.openRankings);
-		Panel.addEngineOpenEvent('screen-tech-tree-chooser', this.openTechChooser);
-		Panel.addEngineOpenEvent('screen-policies', this.onOpenPolicies);
-		Panel.addEngineOpenEvent('screen-great-works', this.onOpenGreatWorks);
-		Panel.addEngineOpenEvent('screen-resource-allocation', this.onOpenResourceAllocation);
-		Panel.addEngineOpenEvent('screen-unlocks', this.onOpenUnlocks);
-
 		this.Root.listenForWindowEvent('focus-sub-system', this.focusSubsystemListener);
 	}
 
 	onDetach() {
-		const religionName = this.getReligionScreenName();
-
-		if (religionName) {
-			Panel.removeEngineOpenEvent(religionName);
-		}
-
-		Panel.removeEngineOpenEvent('screen-unlocks', this.onOpenUnlocks);
-		Panel.removeEngineOpenEvent('screen-resource-allocation', this.onOpenResourceAllocation);
-		Panel.removeEngineOpenEvent('screen-great-works', this.onOpenGreatWorks);
-		Panel.removeEngineOpenEvent('screen-policies', this.onOpenPolicies);
-		Panel.removeEngineOpenEvent('screen-tech-tree-chooser', this.openTechChooser);
-		Panel.removeEngineOpenEvent('screen-victory-progress', this.openRankings);
-		Panel.removeEngineOpenEvent('screen-culture-tree-chooser', this.openCultureChooser);
-
 		super.onDetach();
+	}
+
+	override generateOpenCallbacks(callbacks: Record<string, OptionalOpenCallback>): void {
+		callbacks['screen-culture-tree-chooser'] = this.openCultureChooser;
+		callbacks['screen-victory-progress'] = this.openRankings;
+		callbacks['screen-tech-tree-chooser'] = this.openTechChooser;
+		callbacks['screen-policies'] = this.onOpenPolicies;
+		callbacks['screen-great-works'] = this.onOpenGreatWorks;
+		callbacks['screen-resource-allocation'] = this.onOpenResourceAllocation;
+		callbacks['screen-unlocks'] = this.onOpenUnlocks;
+
+		const religionScreen = this.getReligionScreenName()
+
+		callbacks['screen-pantheon-chooser'] = religionScreen == 'screen-pantheon-chooser' ? this.openReligionViewer : undefined;
+		callbacks['panel-pantheon-complete'] = religionScreen == 'panel-pantheon-complete' ? this.openReligionViewer : undefined;
+		callbacks['panel-religion-picker'] = religionScreen == 'panel-religion-picker' ? this.openReligionViewer : undefined;
+		callbacks['panel-belief-picker'] = religionScreen == 'panel-belief-picker' ? this.openReligionViewer : undefined;
 	}
 
 	private addRingButton(buttonData: RingButtonData, index?: number) {
@@ -468,12 +470,8 @@ class PanelSubSystemDock extends Panel {
 		const ageProgress = Game.AgeProgressManager.getCurrentAgeProgressionPoints();
 		const maxAgeProgress = Game.AgeProgressManager.getMaxAgeProgressionPoints();
 
-		if (Game.AgeProgressManager.isExtendedGame) {
+		if (this.ageNeverEnds) {
 			this.ageRing.removeAttribute('data-tooltip-content');
-		}
-		else if (Game.maxTurns > 0) {
-			const ageProgressFrac = Locale.compose("LOC_ACTION_PANEL_CURRENT_TURN_OVER_MAX_TURNS", Game.turn, Game.maxTurns);
-			this.ageRing.setAttribute('data-tooltip-content', ageProgressFrac);
 		} else {
 			const ageProgressFrac = Locale.compose("LOC_ACTION_PANEL_CURRENT_AGE_PROGRESS", ageName, ageProgress, maxAgeProgress);
 			this.ageRing.setAttribute('data-tooltip-content', ageProgressFrac);
@@ -483,7 +481,7 @@ class PanelSubSystemDock extends Panel {
 	}
 
 	private updateVictoryMeter(victoryProgression: number) {
-		if (Game.AgeProgressManager.isExtendedGame) {
+		if (this.ageNeverEnds) {
 			this.ageRing?.setAttribute('min-value', '0');
 			this.ageRing?.setAttribute('max-value', '0');
 			this.ageRing?.setAttribute('value', '0');
@@ -596,7 +594,18 @@ class PanelSubSystemDock extends Panel {
 
 		if (localPlayerHappiness.isInGoldenAge()) {
 			const goldenAgeTurnsLeft: number = localPlayerHappiness.getGoldenAgeTurnsLeft();
-			this.policiesButton?.setAttribute("data-tooltip-content", Locale.compose("LOC_SUB_SYSTEM_TRADITIONS_TURNS_UNTIL_CELEBRATION_END", goldenAgeTurnsLeft));
+			const goldenAgeType = localPlayerHappiness.getCurrentGoldenAge();
+			const celebrationItemDef: GoldenAgeDefinition | null = GameInfo.GoldenAges.lookup(goldenAgeType);
+
+			if (celebrationItemDef) {
+				const description = Locale.compose(celebrationItemDef.Description, goldenAgeTurnsLeft);
+				const tooltipContent = Locale.stylize("LOC_SUB_SYSTEM_TRADITIONS_DURING_CELEBRATION", celebrationItemDef.Name, goldenAgeTurnsLeft, description);
+				this.policiesButton?.setAttribute("data-tooltip-content", tooltipContent);
+			} else {
+				this.policiesButton?.setAttribute("data-tooltip-content", Locale.compose("LOC_SUB_SYSTEM_TRADITIONS_TURNS_UNTIL_CELEBRATION_END", goldenAgeTurnsLeft));
+			}
+			this.goldenAgeTurns.innerHTML = goldenAgeTurnsLeft.toString();
+			this.goldenAgeCrown.classList.remove("hidden");
 		}
 		else {
 			const happinessPerTurn: number = localPlayerStats.getNetYield(YieldTypes.YIELD_HAPPINESS) ?? -1;
@@ -604,6 +613,7 @@ class PanelSubSystemDock extends Panel {
 			const happinessTotal: number = Math.ceil(localPlayerStats.getLifetimeYield(YieldTypes.YIELD_HAPPINESS)) ?? -1;
 			const turnsToNextGoldenAge: number = Math.ceil((nextGoldenAgeThreshold - happinessTotal) / happinessPerTurn);
 			this.policiesButton?.setAttribute("data-tooltip-content", Locale.compose("LOC_SUB_SYSTEM_TRADITIONS_TURNS_UNTIL_CELEBRATION_START", turnsToNextGoldenAge));
+			this.goldenAgeCrown.classList.add("hidden");
 		}
 	}
 
@@ -774,6 +784,10 @@ class PanelSubSystemDock extends Panel {
 		ContextManager.push("screen-unlocks", { singleton: true, createMouseGuard: true });
 	}
 
+	private onGoldenAgeChanged() {
+		this.updatePoliciesTooltip();
+	}
+
 	private getReligionScreenName(): string | undefined {
 		const curAge: AgeType = Game.age;
 		if (curAge == Database.makeHash("AGE_ANTIQUITY")) {
@@ -835,11 +849,28 @@ class PanelSubSystemDock extends Panel {
 			ContextManager.push(screen, { singleton: true });
 		}
 	}
+
+	private get ageNeverEnds() {
+		return Game.AgeProgressManager.isExtendedGame || Game.AgeProgressManager.getMaxAgeProgressionPoints() <= 0;
+	}
 }
 
 Controls.define('panel-sub-system-dock', {
 	createInstance: PanelSubSystemDock,
 	description: 'Area for sub system button icons.',
+	opens: [
+		'screen-culture-tree-chooser',
+		'screen-victory-progress',
+		'screen-tech-tree-chooser',
+		'screen-policies',
+		'screen-great-works',
+		'screen-resource-allocation',
+		'screen-unlocks',
+		'screen-pantheon-chooser',
+		'panel-pantheon-complete',
+		'panel-religion-picker',
+		'panel-belief-picker',
+	],
 	classNames: ['sub-system-dock', 'allowCameraMovement'],
 	styles: ["fs://game/base-standard/ui/sub-system-dock/panel-sub-system-dock.css"],
 	images: [

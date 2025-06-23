@@ -636,7 +636,7 @@ export class ScreenPolicies extends Panel {
 	}
 
 	private populateAvailableNormalPolicies() {
-		const availableContainer = MustGetElement(".policies_policies-available-container", this.currentWindow);
+		const availableContainer = MustGetElement(".policies_policies-available-container", this.Root);
 		while (availableContainer.hasChildNodes()) {
 			availableContainer.removeChild(availableContainer.lastChild!);
 		};
@@ -652,7 +652,7 @@ export class ScreenPolicies extends Panel {
 	}
 
 	private populateActiveNormalPolicies() {
-		const activeContainer = MustGetElement(".policies_policies-active-container", this.currentWindow);
+		const activeContainer = MustGetElement(".policies_policies-active-container", this.Root);
 		while (activeContainer.hasChildNodes()) {
 			activeContainer.removeChild(activeContainer.lastChild!);
 		};
@@ -676,7 +676,7 @@ export class ScreenPolicies extends Panel {
 	}
 
 	private populateAvailableCrisisPolicies() {
-		const availableContainer = MustGetElement(".policies_crisis-available-container", this.currentWindow);
+		const availableContainer = MustGetElement(".policies_crisis-available-container", this.Root);
 		while (availableContainer.hasChildNodes()) {
 			availableContainer.removeChild(availableContainer.lastChild!);
 		};
@@ -692,7 +692,7 @@ export class ScreenPolicies extends Panel {
 	}
 
 	private populateActiveCrisisPolicies() {
-		const activeContainer = MustGetElement(".policies_crisis-active-container", this.currentWindow);
+		const activeContainer = MustGetElement(".policies_crisis-active-container", this.Root);
 		while (activeContainer.hasChildNodes()) {
 			activeContainer.removeChild(activeContainer.lastChild!);
 		};
@@ -1050,11 +1050,11 @@ export class ScreenPolicies extends Panel {
 				const card = cardList[i];
 				if (card instanceof HTMLElement) {
 					//this implementation breaks min-height, so here it is set manually						
-					if (maxHeight > 125) {
+					if (maxHeight > 145) {
 						card.style.heightPX = maxHeight;
 					}
 					else {
-						card.style.heightPX = 125;
+						card.style.heightPX = 145;
 					}
 				}
 			}
