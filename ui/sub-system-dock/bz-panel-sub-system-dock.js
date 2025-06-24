@@ -1,4 +1,4 @@
-import { getCurrentGoldenAge } from '/bz-ready-or-not/ui/policies/bz-screen-policies.js';
+import { getGoldenAgeInfo } from '/bz-ready-or-not/ui/policies/bz-screen-policies.js';
 const BZ_COLOR = {
     celebration: "#cfba6a",
     ring: "#b5afa9",
@@ -16,13 +16,18 @@ const BZ_HEAD_STYLE = [
 }
 .bz-gov.bz-ready .ssb__button-icon {
     background-image: url('blp:ntf_tradition_slot_unlocked_blk');
+    z-index: 1;
 }
 .ssb__element.bz-gov {
     margin: 0.3333333333rem;
     margin-top: 0.5555555556rem;
 }
-.bz-celebration .ssb__button-iconbg.bz-gov {
-    filter: brightness(2) fxs-color-tint(${BZ_COLOR.celebration});
+.bz-gov .sub-system-dock--golden-age-ring {
+    margin-top: -0.0555555556rem;
+    display: none;
+}
+.bz-gov.bz-celebration .sub-system-dock--golden-age-ring {
+    display: flex;
 }
 .bz-gov .fxs-ring-meter__ring {
     width: 4.8888888889rem;
@@ -51,12 +56,16 @@ const BZ_HEAD_STYLE = [
     border-radius: 50% / 0 0 0.1666666667rem 0.1666666667rem;
     z-index: -1;
 }
+.bz-gov.bz-celebration .ssb-button__turn-counter {
+    height: 1.7222222222rem;
+}
 .bz-gov .ssb-button__turn-counter-content {
     margin-top: 0.1666666667rem;
 }
 .bz-gov.bz-celebration .ssb-button__turn-counter-content {
     color: ${BZ_COLOR.celebration};
     font-weight: 900;
+    margin-top: 0.5000000000rem;
 }
 `,
 ];
@@ -77,6 +86,7 @@ export class bzSubSystemDock {
         this.govButton = null;
         this.govRing = null;
         this.govTurnCounter = null;
+        this.govCrown = null;
         this.cityInitializedListener = this.onCityInitialized.bind(this);
         this.tradeRouteListener = this.onTradeRouteUpdates.bind(this);
         this.patchPrototypes(this.component);
@@ -119,6 +129,10 @@ export class bzSubSystemDock {
         this.govButton = govElements.button;
         this.govRing = govElements.ring;
         this.govTurnCounter = govElements.turnCounter;
+        this.govCrown = document.createElement("div");
+        this.govCrown.classList.add("sub-system-dock--golden-age-ring",
+            "absolute", "-inset-4", "bg-no-repeat", "bg-cover");
+        this.govButton.append(this.govCrown);
         this.buttonContainer.replaceChild(this.govRing, this.component.policiesButton);
         // leave the new button disconnected to disable conflicting mods
         // this.component.policiesButton = this.govRing;
@@ -146,7 +160,7 @@ export class bzSubSystemDock {
         const ringAndButton = {
             button: this.component.createButton(buttonData),
             ring: this.component.createRing(buttonData),
-            turnCounter
+            turnCounter,
         };
         ringAndButton.ring.appendChild(ringAndButton.button);
         ringAndButton.ring.appendChild(ringAndButton.turnCounter);
@@ -168,34 +182,51 @@ export class bzSubSystemDock {
         this.govRing.classList.toggle('bz-celebration', isCelebration);
         const isReady = player.Culture?.canSwapNormalTraditions ?? false;
         this.govButton.classList.toggle('bz-ready', isReady);
-        let turnsLeft = 0;
-        let progress = 0;
+        const ginfo = getGoldenAgeInfo(player);
+        const hyield = player.Stats.getNetYield(YieldTypes.YIELD_HAPPINESS) ?? 0;
+        const htotal = player.Stats.getLifetimeYield(YieldTypes.YIELD_HAPPINESS) ?? 0;
+        // calculate happiness needed, earned, and remaining
+        const hspan = ginfo.threshold.next - ginfo.threshold.last;
+        const hdone = Math.max(0, htotal - ginfo.threshold.last);
+        const hleft = Math.max(0, hspan - hdone);
+        const nextProgress = Math.min(hdone / hspan, 1);
+        const nextTurnsLeft = hyield ? Math.ceil(hleft / hyield) : 0;
+        // create tooltip
+        let turnsLeft = nextTurnsLeft;
+        let progress = nextProgress;
         const tooltip = [];
+        const ctext = "LOC_SUB_SYSTEM_TRADITIONS_DURING_CELEBRATION";
+        const stext = "LOC_SUB_SYSTEM_TRADITIONS_TURNS_UNTIL_CELEBRATION_START";
+        const etext = "LOC_SUB_SYSTEM_TRADITIONS_TURNS_UNTIL_CELEBRATION_END";
+        const lbreak = /\[[Nn]\]/;  // line break: [N] or [n]
+        const bold = (text) => `[b]${text}[/b]`;
+        // show celebration type
         if (isCelebration) {
             const duration = player.Happiness.getGoldenAgeDuration();
             turnsLeft = player.Happiness.getGoldenAgeTurnsLeft();
             progress = turnsLeft / duration;
-            tooltip.push(Locale.compose("LOC_SUB_SYSTEM_TRADITIONS_TURNS_UNTIL_CELEBRATION_END", turnsLeft));
-            const goldenAge = getCurrentGoldenAge(player.id);
-            if (goldenAge) {
-                const description = Locale.compose(goldenAge.Description, duration);
-                tooltip.push(`[b]${description}[/b]`);
-            }
-            this.govButton.setAttribute("data-tooltip-content", tooltip.join('[n]'));
-        }
-        else {
-            const happinessPerTurn = player.Stats.getNetYield(YieldTypes.YIELD_HAPPINESS) ?? -1;
-            const nextGoldenAgeThreshold = player.Happiness.nextGoldenAgeThreshold;
-            const happinessTotal = Math.ceil(player.Stats.getLifetimeYield(YieldTypes.YIELD_HAPPINESS)) ?? -1;
-            if (happinessPerTurn <= 0 || happinessTotal < 0) {
-                progress = turnsLeft = 0;
+            const next = Locale.compose(stext, Math.max(turnsLeft, nextTurnsLeft));
+            if (ginfo.current) {
+                // show current celebration type and bonus
+                const gtext = Locale.compose(ginfo.current.Description, turnsLeft);
+                const text = Locale.compose(ctext, ginfo.current.Name, turnsLeft, gtext);
+                tooltip.push(...next.split(lbreak), ...text.split(lbreak).slice(1));
             } else {
-                progress = happinessTotal / nextGoldenAgeThreshold;
-                turnsLeft = Math.ceil((nextGoldenAgeThreshold - happinessTotal) / happinessPerTurn);
+                // use the generic celebration countdown as a fallback,
+                // but skip the "View Your Social Policies" line
+                const text = Locale.compose(etext, turnsLeft);
+                tooltip.push(...text.split(lbreak), ...next.split(lbreak).slice(1));
             }
-            tooltip.push(Locale.compose("LOC_SUB_SYSTEM_TRADITIONS_TURNS_UNTIL_CELEBRATION_START", turnsLeft));
+        } else {
+            const next = Locale.compose(stext, nextTurnsLeft);
+            tooltip.push(...next.split(lbreak));
         }
-        if (isReady) tooltip.push(' ', Locale.compose("LOC_UI_POLICIES_CAN_SWAP"));
+        // show policy change status
+        if (isReady) {
+            const swap = Locale.compose("LOC_UI_POLICIES_CAN_SWAP");
+            tooltip.splice(1, 0, bold(swap));
+        }
+        // update progress meter & turn counter
         this.govButton.setAttribute("data-tooltip-content", tooltip.join('[n]'));
         this.component.updateTurnCounter(this.govTurnCounter, turnsLeft.toString());
         this.govRing.setAttribute('value', (progress * 100).toString());
