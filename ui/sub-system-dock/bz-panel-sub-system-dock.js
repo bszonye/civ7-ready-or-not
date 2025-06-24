@@ -21,6 +21,9 @@ const BZ_HEAD_STYLE = [
     margin: 0.3333333333rem;
     margin-top: 0.5555555556rem;
 }
+.bz-gov .sub-system-dock--golden-age-ring {
+    margin-top: -0.0555555556rem;
+}
 .bz-celebration .ssb__button-iconbg.bz-gov {
     filter: brightness(2) fxs-color-tint(${BZ_COLOR.celebration});
 }
@@ -77,6 +80,7 @@ export class bzSubSystemDock {
         this.govButton = null;
         this.govRing = null;
         this.govTurnCounter = null;
+        this.govCrown = null;
         this.cityInitializedListener = this.onCityInitialized.bind(this);
         this.tradeRouteListener = this.onTradeRouteUpdates.bind(this);
         this.patchPrototypes(this.component);
@@ -137,6 +141,8 @@ export class bzSubSystemDock {
         this.updateResourcesButton();
     }
     createRingButton(buttonData) {
+        const crown = document.createElement("div");
+        crown.classList.add("sub-system-dock--golden-age-ring", "absolute", "-inset-4", "bg-no-repeat", "bg-cover");
         const turnCounter = document.createElement("div");
         turnCounter.classList.add("ssb-button__turn-counter");
         turnCounter.setAttribute("data-tut-highlight", "founderHighlight");
@@ -146,9 +152,11 @@ export class bzSubSystemDock {
         const ringAndButton = {
             button: this.component.createButton(buttonData),
             ring: this.component.createRing(buttonData),
+            crown,
             turnCounter
         };
         ringAndButton.ring.appendChild(ringAndButton.button);
+        ringAndButton.ring.appendChild(ringAndButton.crown);
         ringAndButton.ring.appendChild(ringAndButton.turnCounter);
         if (buttonData.ringClass) {
             ringAndButton.ring.setAttribute("ring-class", buttonData.ringClass);
