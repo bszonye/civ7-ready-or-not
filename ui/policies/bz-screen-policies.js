@@ -80,12 +80,17 @@ export function getGoldenAgeInfo(player) {
                 continue;
         }
     }
+    // get the current celebration type
+    if (player.Happiness.isInGoldenAge()) {
+        const gtype = player.Happiness.getCurrentGoldenAge();
+        info.current = GameInfo.GoldenAges.lookup(gtype) ?? null;
+    }
     // calculate celebration thresholds (next and last)
     // the next threshold is usually in player.Happiness, but the value
     // doesn't update to the next level until after the player chooses
     // a celebration bonus.  determine whether the current value is next
     // or last and then calculate the other one.
-    const pending = !!info.IsGoldenAgeChoiceRequired;
+    const pending = info.current === null;  // choice pending
     const earned = (info.NumGoldenAgesEarned ?? 0) + (pending ? 1 : 0);
     const next = player.Happiness?.nextGoldenAgeThreshold ?? info.NextGoldenAgeThreshold;
     info.threshold = { pending, earned, };
@@ -95,9 +100,6 @@ export function getGoldenAgeInfo(player) {
     } else {
         info.threshold.last = getGoldenAgeThreshold(earned);
         info.threshold.next = next ?? getGoldenAgeThreshold(earned + 1);
-        if (info.IsInGoldenAge) {
-            info.current = GameInfo.GoldenAges[info.CurrentGoldenAge];
-        }
     }
     return info;
 }
@@ -105,22 +107,15 @@ class bzScreenPolicies {
     constructor(component) {
         this.component = component;
         component.bzComponent = this;
-        this.Root = this.component.Root;
-        this.localPlayer = null;
-        this.overviewWindow = null;
     }
     beforeAttach() { }
     afterAttach() {
-        this.localPlayer = this.component.localPlayer;
-        this.overviewWindow = this.component.overviewWindow;
         // get the icon for the current celebration, if any
-        const gtype = this.localPlayer.Happiness?.isInGoldenAge() ?
-            getGoldenAgeInfo(this.localPlayer)?.current?.GoldenAgeType ?? null :
-            null;
-        const icon = this.overviewWindow.querySelector(".policies__overview-happiness-meter-image");
-        icon.style.backgroundImage = gtype ?
-            UI.getIconCSS(gtype) :
-            'url("celeb_happiness_icon")';
+        const ginfo = getGoldenAgeInfo(this.component.localPlayer);
+        const gicon = this.component.overviewWindow
+            .querySelector(".policies__overview-happiness-meter-image");
+        gicon.style.backgroundImage = ginfo.current ?
+            UI.getIconCSS(ginfo.current.GoldenAgeType) : 'url("celeb_happiness_icon")';
     }
     beforeDetach() { }
     afterDetach() { }
