@@ -14,6 +14,9 @@ const BZ_HEAD_STYLE = [
 .resources.bz-ready .ssb__button-icon {
     background-image: url('blp:ntf_discover_resource_blk');
 }
+.bz-gov {
+    isolation: isolate;
+}
 .bz-gov.bz-ready .ssb__button-icon {
     background-image: url('blp:ntf_tradition_slot_unlocked_blk');
     z-index: 1;
