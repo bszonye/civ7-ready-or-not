@@ -37,18 +37,36 @@ $age-button-size-inner: 88;
 $age-button-shadow-size: $age-button-size - $age-button-size-inner;
 $age-button-overlap: 71;
 
+$mobile-age-button-size: 153.6;
+$mobile-age-button-size-inner: 105.6;
+$mobile-age-button-shadow-size: $mobile-age-button-size - $mobile-age-button-size-inner;
+$mobile-age-button-overlap: 85.2;
+
 $techcivic-button-size: 128;
 $techcivic-button-size-inner: 77;
 $techcivic-button-shadow-size: $techcivic-button-size - $techcivic-button-size-inner;
 $techcivic-button-overlap: 82;
 
+$mobile-techcivic-button-size: 153.6;
+$mobile-techcivic-button-size-inner: 92.4;
+$mobile-techcivic-button-shadow-size: $mobile-techcivic-button-size - $mobile-techcivic-button-size-inner;
+$mobile-techcivic-button-overlap: 98.4;
+
 $button-size: 64;
 $button-size-inner: 52;
 $button-shadow-size: $button-size - $button-size-inner;
 
+$mobile-button-size: 76.8;
+$mobile-button-size-inner: 62.4;
+$mobile-button-shadow-size: $mobile-button-size - $mobile-button-size-inner;
+
 .ssb__element {
 	width: pixels($button-size-inner);
 	height: pixels($button-size-inner);
+	@media (experience: mobile) {
+		width: pixels($mobile-button-size-inner);
+		height: pixels($mobile-button-size-inner);
+	}
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -94,6 +112,15 @@ $button-shadow-size: $button-size - $button-size-inner;
 	// accounts for the shadow
 	margin: pixels(calc(($age-button-shadow-size - $age-button-overlap) / 2));
 	margin-left: pixels(calc($age-button-shadow-size / 2));
+
+	@media (experience: mobile) {
+		width: pixels($mobile-age-button-size);
+		height: pixels($mobile-age-button-size);
+
+		// accounts for the shadow
+		margin: pixels(calc(($mobile-age-button-shadow-size - $mobile-age-button-overlap) / 2));
+		margin-left: pixels(calc($mobile-age-button-shadow-size / 3.5));
+	}
 }
 
 
@@ -101,9 +128,14 @@ $button-shadow-size: $button-size - $button-size-inner;
 .ssb__element.civic {
 	width: pixels($techcivic-button-size);
 	height: pixels($techcivic-button-size);
-
 	// accounts for the shadow
 	margin: pixels(calc(($techcivic-button-shadow-size - $techcivic-button-overlap) / 2));
+
+	@media (experience: mobile) {
+		width: pixels($mobile-techcivic-button-size);
+		height: pixels($mobile-techcivic-button-size);
+		margin: pixels(calc(($mobile-techcivic-button-shadow-size - $mobile-techcivic-button-overlap) / 2));
+	}	
 }
 
 .ssb__element.agetimer,
@@ -154,6 +186,11 @@ $button-shadow-size: $button-size - $button-size-inner;
 	width: pixels($button-size-inner);
 	height: pixels($button-size-inner);
 
+	@media (experience: mobile) {
+		width: pixels($mobile-button-size-inner);
+		height: pixels($mobile-button-size-inner);
+	}
+
 	&.hud-select-potential:focus {
 		transform: scale(1.3);
 		z-index: 1;
@@ -182,8 +219,12 @@ $subsystem-iconbg-state-map: (
 $subsystem-states in $subsystem-iconbg-state-map {
 	@if $subsystem !="default" {
 		.ssb__button-iconbg.#{$subsystem} {
-			width: pixels(128);
-			height: pixels(128);
+			width: pixels($age-button-size);
+			height: pixels($age-button-size);
+			@media (experience: mobile) {
+				width: pixels($mobile-age-button-size);
+			height: pixels($mobile-age-button-size);
+			}
 			background-image: url('blp:#{map.get($subsystem-states, "idle")}');
 		}
 	}
@@ -217,6 +258,10 @@ $subsystem-states in $subsystem-iconbg-state-map {
 	pointer-events: none;
 	width: pixels($button-size);
 	height: pixels($button-size);
+	@media (experience: mobile) {
+		width: pixels($mobile-button-size);
+		height: pixels($mobile-button-size);
+	}
 	background-size: contain;
 	background-repeat: no-repeat no-repeat;
 	background-position: center;
@@ -249,6 +294,10 @@ $icon in $subsystem-icon-map {
 	pointer-events: none;
 	width: pixels($button-size);
 	height: pixels($button-size);
+	@media (experience: mobile) {
+		width: pixels($mobile-button-size);
+		height: pixels($mobile-button-size);
+	}
 	background-position: 50% 50%;
 	background-size: contain;
 	background-repeat: no-repeat no-repeat;

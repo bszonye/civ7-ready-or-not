@@ -6,6 +6,13 @@
 
 import ContextManager from '/core/ui/context-manager/context-manager.js'
 
+export enum PolicyTabPlacement {
+	NONE,
+	OVERVIEW,
+	POLICIES,
+	CRISIS
+}
+
 class PoliciesModel {
 	private _myGovernment: GovernmentDefinition | null = null;
 	private _activePolicies: TraditionDefinition[] = [];
@@ -18,6 +25,8 @@ class PoliciesModel {
 	private _numSlots: number = 0;
 	private _numNormalSlots: number = 0;
 	private _numCrisisSlots: number = 0;
+
+	private _activeTab: PolicyTabPlacement = PolicyTabPlacement.NONE;
 
 	private onUpdate?: (model: PoliciesModel) => void;
 
@@ -61,6 +70,14 @@ class PoliciesModel {
 
 	get numCrisisSlots(): number {
 		return this._numCrisisSlots;
+	}
+
+	get activeTab(): PolicyTabPlacement {
+		return this._activeTab;
+	}
+
+	set activeTab(activeTab: PolicyTabPlacement) {
+		this._activeTab = activeTab;
 	}
 
 	constructor() {

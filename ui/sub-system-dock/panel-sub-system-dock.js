@@ -7,6 +7,7 @@ import ContextManager from '/core/ui/context-manager/context-manager.js';
 import FocusManager from '/core/ui/input/focus-manager.js';
 import Panel, { AnchorType } from '/core/ui/panel-support.js';
 import DialogManager from '/core/ui/dialog-box/manager-dialog-box.js';
+import PopupSequencer from '/base-standard/ui/popup-sequencer/popup-sequencer.js';
 import { Icon } from '/core/ui/utilities/utilities-image.js';
 /**
  * Area for sub system button icons.
@@ -361,8 +362,20 @@ class PanelSubSystemDock extends Panel {
             this.ageRing.removeAttribute('data-tooltip-content');
         }
         else {
-            const ageProgressFrac = Locale.compose("LOC_ACTION_PANEL_CURRENT_AGE_PROGRESS", ageName, ageProgress, maxAgeProgress);
-            this.ageRing.setAttribute('data-tooltip-content', ageProgressFrac);
+            const ageCountdownStarted = Game.AgeProgressManager.ageCountdownStarted;
+            let tooltipString = Locale.compose("LOC_ACTION_PANEL_CURRENT_AGE_PROGRESS", ageName, ageProgress, maxAgeProgress);
+            if (ageCountdownStarted) {
+                const curAgeProgress = Game.AgeProgressManager.getCurrentAgeProgressionPoints();
+                const maxAgeProgress = Game.AgeProgressManager.getMaxAgeProgressionPoints();
+                const ageProgressLeft = maxAgeProgress - curAgeProgress;
+                if (ageProgressLeft == 0) {
+                    tooltipString += `[n]${Locale.compose("LOC_UI_GAME_FINAL_TURN_OF_AGE")}`;
+                }
+                else {
+                    tooltipString += `[n]${Locale.compose("LOC_UI_X_TURNS_LEFT_UNTIL_AGE_END", ageProgressLeft)}`;
+                }
+            }
+            this.ageRing.setAttribute('data-tooltip-content', tooltipString);
         }
         this.updateVictoryMeter(ageProgress);
     }
@@ -625,7 +638,12 @@ class PanelSubSystemDock extends Panel {
         ContextManager.push("screen-resource-allocation", { singleton: true, createMouseGuard: true });
     }
     onOpenUnlocks() {
-        ContextManager.push("screen-unlocks", { singleton: true, createMouseGuard: true });
+        const unlocksData = {
+            category: PopupSequencer.getCategory(),
+            screenId: "screen-unlocks",
+            properties: { singleton: true, createMouseGuard: true },
+        };
+        PopupSequencer.addDisplayRequest(unlocksData);
     }
     onGoldenAgeChanged() {
         this.updatePoliciesTooltip();

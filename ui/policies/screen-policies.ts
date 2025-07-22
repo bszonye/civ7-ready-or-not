@@ -4,7 +4,7 @@
  * @description Interface for viewing and slotting policies
  */
 
-import PoliciesData from './model-policies.js';
+import PoliciesData, { PolicyTabPlacement } from './model-policies.js';
 import Panel from '/core/ui/panel-support.js';
 import { InputEngineEvent, InputEngineEventName, NavigateInputEvent, NavigateInputEventName } from '/core/ui/input/input-support.js';
 import { MustGetElement } from '/core/ui/utilities/utilities-dom.js';
@@ -18,12 +18,6 @@ import { Audio } from '/core/ui/audio-base/audio-support.js';
 import { Focus } from '/core/ui/input/focus-support.js';
 import { Layout } from '/core/ui/utilities/utilities-layout.js';
 
-export enum PolicyTabPlacement {
-	NONE,
-	OVERVIEW,
-	POLICIES,
-	CRISIS
-}
 export type PolicyTab = ReturnType<typeof getPolicyTabItems>[number];
 const getPolicyTabItems = (numOpenNormalSlots: number, numOpenCrisisSlots: number) => {
 	const overviewTab = {
@@ -143,6 +137,17 @@ export class ScreenPolicies extends Panel {
 			this.close();
 		});
 
+		const frame = MustGetElement("fxs-frame", this.Root);
+		frame.setAttribute("outside-safezone-mode", "full");
+
+		const uiViewExperience = UI.getViewExperience();
+		if (uiViewExperience == UIViewExperience.Mobile) {
+			frame.setAttribute("frame-style", "f1");
+			frame.setAttribute("top-border-style", "");
+			frame.setAttribute("filigree-class", "mt-1");
+			frame.setAttribute("override-styling", "pt-5 relative flex size-full px-10 pb-10");
+		}
+
 		this.localPlayer = Players.get(GameContext.localPlayerID);
 		if (!this.localPlayer) {
 			console.error("screen-policies: onAttach(): No local player!");
@@ -217,17 +222,35 @@ export class ScreenPolicies extends Panel {
 		}
 		else {
 			const tabsContainer = MustGetElement("fxs-tab-bar", this.Root);
-			if (this.canSwapNormalPolicies) {
-				this.goToNewWindow(this.policiesWindow);
-				tabsContainer.setAttribute("selected-tab-index", "1");
+			let activeTab = PoliciesData.activeTab;
+			if (activeTab === PolicyTabPlacement.NONE) {
+				if (this.canSwapNormalPolicies) {
+					activeTab = PolicyTabPlacement.POLICIES;
+				}
+				else if (this.canSwapCrisisPolicies) {
+					activeTab = PolicyTabPlacement.CRISIS;
+				}
+				else {
+					activeTab = PolicyTabPlacement.OVERVIEW;
+				}
+
+				PoliciesData.activeTab = activeTab;
 			}
-			else if (this.canSwapCrisisPolicies) {
-				this.goToNewWindow(this.crisisWindow);
-				tabsContainer.setAttribute("selected-tab-index", "2");
+
+			switch (activeTab) {
+				case PolicyTabPlacement.OVERVIEW:
+					this.goToNewWindow(this.overviewWindow);
+					break;
+				case PolicyTabPlacement.POLICIES:
+					this.goToNewWindow(this.policiesWindow);
+					tabsContainer.setAttribute("selected-tab-index", "1");
+					break;
+				case PolicyTabPlacement.CRISIS:
+					this.goToNewWindow(this.crisisWindow);
+					tabsContainer.setAttribute("selected-tab-index", "2");
+					break;
 			}
-			else {
-				this.goToNewWindow(this.overviewWindow);
-			}
+
 			this.initialSetupDone = true;
 		}
 		const tabsContainer = MustGetElement("fxs-tab-bar", this.Root);
@@ -235,12 +258,14 @@ export class ScreenPolicies extends Panel {
 	}
 
 	private focusOverviewWindow() {
+		PoliciesData.activeTab = PolicyTabPlacement.OVERVIEW;
 		this.refreshOverviewPolicies()
 		FocusManager.setFocus(MustGetElement(".policies__overview-normal-section", this.overviewWindow));
 		this.confirmButton.classList.add("hidden");
 	}
 
 	private focusPoliciesWindow() {
+		PoliciesData.activeTab = PolicyTabPlacement.POLICIES;
 		this.refreshPolicyWindow();
 		if (this.displayAvailableNormalPolicies.length > 0) {
 			this.focusAvailablePolicyContainer();
@@ -252,6 +277,7 @@ export class ScreenPolicies extends Panel {
 	}
 
 	private focusCrisisWindow() {
+		PoliciesData.activeTab = PolicyTabPlacement.CRISIS;
 		this.refreshCrisisWindow();
 		if (this.displayAvailableCrisisPolicies.length > 0) {
 			this.focusAvailableCrisisContainer();
@@ -599,6 +625,7 @@ export class ScreenPolicies extends Panel {
 
 		crisisProgressText.classList.toggle("hidden", !showCrisisText);
 
+		const uiViewExperience = UI.getViewExperience();
 		for (const crisisMarker of this.crisisEventMarkers) {
 			const marker = document.createElement("div");
 			marker.classList.value = `w-0\\.5 h-4 bg-primary text-center absolute bottom-0`;
@@ -610,6 +637,16 @@ export class ScreenPolicies extends Panel {
 			marker.appendChild(markerText);
 
 			markerContainer.appendChild(marker);
+
+			if (uiViewExperience == UIViewExperience.Mobile) {
+				// Move the 2nd (timeline placement 30%) and 4th (timeline placement 10%) crisis markers below the progress bar
+				const timelinePlacement = Math.round((1 - crisisMarker.timelinePlacement) * 100);
+				const moveToBottom = timelinePlacement == 30 || timelinePlacement == 10;
+				marker.classList.toggle('top-2', moveToBottom);
+				markerText.classList.toggle('top-full', moveToBottom);
+				markerText.classList.add('w-48');
+				markerText.classList.remove('max-w-25');
+			}
 		}
 
 		if (!this.canSwapCrisisPolicies) {
@@ -785,7 +822,7 @@ export class ScreenPolicies extends Panel {
 			openPolicyCard.classList.value = `policies-open-slot-normal policy-placeable policy-chooser-element m-2 bg-no-repeat bg-auto bg-center flex items-center justify-center`;
 
 			const openPolicyCardText = document.createElement("div");
-			openPolicyCardText.classList.value = "font-title-base max-w-48 text-center";
+			openPolicyCardText.classList.value = "policies-open-slot-text font-title-base max-w-48 text-center";
 			openPolicyCardText.setAttribute("data-l10n-id", "LOC_UI_POLICIES_ADD_NORMAL_POLICY");
 			openPolicyCard.appendChild(openPolicyCardText);
 			return openPolicyCard;
@@ -809,7 +846,7 @@ export class ScreenPolicies extends Panel {
 			openPolicyCardBG.appendChild(openPolicyCardBGRight);
 
 			const openPolicyCardText = document.createElement("div");
-			openPolicyCardText.classList.value = "font-title-base max-w-48 text-center relative";
+			openPolicyCardText.classList.value = "policies-open-slot-text font-title-base max-w-48 text-center relative";
 			openPolicyCardText.setAttribute("data-l10n-id", "LOC_UI_POLICIES_ADD_NORMAL_POLICY");
 			openPolicyCard.appendChild(openPolicyCardText);
 
@@ -850,7 +887,7 @@ export class ScreenPolicies extends Panel {
 		openPolicyCard.appendChild(openPolicyCardImageBG);
 
 		const openPolicyCardText = document.createElement("div");
-		openPolicyCardText.classList.value = "font-title-base max-w-48 text-center";
+		openPolicyCardText.classList.value = "policies-open-slot-text font-title-base max-w-48 text-center";
 		openPolicyCardText.setAttribute("data-l10n-id", "LOC_UI_POLICIES_ADD_CRISIS_POLICY");
 		openPolicyCard.appendChild(openPolicyCardText);
 
@@ -1148,7 +1185,7 @@ Controls.define('screen-policies', {
 	createInstance: ScreenPolicies,
 	description: 'Screen for choosing policies and crisis policies',
 	requires: ['fxs-button', 'fxs-close-button'],
-	classNames: ['screen-policies', 'absolute', "flex", "items-center", "justify-center"],
+	classNames: ['screen-policies', 'fullscreen', "flex", "items-center", "justify-center"],
 	styles: ['fs://game/base-standard/ui/policies/screen-policies.css'],
 	content: ['fs://game/base-standard/ui/policies/screen-policies.html'],
 	tabIndex: -1

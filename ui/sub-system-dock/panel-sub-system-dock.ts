@@ -10,6 +10,7 @@ import Panel, { AnchorType } from '/core/ui/panel-support.js';
 import FxsRingMeter from '/core/ui/components/fxs-ring-meter.js';
 import FxsActivatable, { ActionActivateEvent } from '/core/ui/components/fxs-activatable.js'
 import DialogManager from '/core/ui/dialog-box/manager-dialog-box.js'
+import PopupSequencer, { PopupSequencerData } from '/base-standard/ui/popup-sequencer/popup-sequencer.js';
 import { Icon } from '/core/ui/utilities/utilities-image.js';
 
 import { CrisisMeter } from '/base-standard/ui/crisis-meter/crisis-meter.js';
@@ -473,8 +474,22 @@ class PanelSubSystemDock extends Panel {
 		if (this.ageNeverEnds) {
 			this.ageRing.removeAttribute('data-tooltip-content');
 		} else {
-			const ageProgressFrac = Locale.compose("LOC_ACTION_PANEL_CURRENT_AGE_PROGRESS", ageName, ageProgress, maxAgeProgress);
-			this.ageRing.setAttribute('data-tooltip-content', ageProgressFrac);
+			const ageCountdownStarted: boolean = Game.AgeProgressManager.ageCountdownStarted;
+			let tooltipString: string = Locale.compose("LOC_ACTION_PANEL_CURRENT_AGE_PROGRESS", ageName, ageProgress, maxAgeProgress);
+			if (ageCountdownStarted) {
+				const curAgeProgress: number = Game.AgeProgressManager.getCurrentAgeProgressionPoints();
+				const maxAgeProgress: number = Game.AgeProgressManager.getMaxAgeProgressionPoints();
+
+				const ageProgressLeft: number = maxAgeProgress - curAgeProgress;
+
+				if (ageProgressLeft == 0) {
+					tooltipString += `[n]${Locale.compose("LOC_UI_GAME_FINAL_TURN_OF_AGE")}`;
+				}
+				else {
+					tooltipString += `[n]${Locale.compose("LOC_UI_X_TURNS_LEFT_UNTIL_AGE_END", ageProgressLeft)}`;
+				}
+			}
+			this.ageRing.setAttribute('data-tooltip-content', tooltipString);
 		}
 
 		this.updateVictoryMeter(ageProgress);
@@ -781,7 +796,13 @@ class PanelSubSystemDock extends Panel {
 	}
 
 	private onOpenUnlocks() {
-		ContextManager.push("screen-unlocks", { singleton: true, createMouseGuard: true });
+		const unlocksData: PopupSequencerData = {
+			category: PopupSequencer.getCategory(),
+			screenId: "screen-unlocks",
+			properties: { singleton: true, createMouseGuard: true },
+		};
+
+		PopupSequencer.addDisplayRequest(unlocksData);
 	}
 
 	private onGoldenAgeChanged() {

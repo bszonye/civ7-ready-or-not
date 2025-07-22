@@ -4,6 +4,13 @@
  * @description Handles all of the data for the policies screen
  */
 import ContextManager from '/core/ui/context-manager/context-manager.js';
+export var PolicyTabPlacement;
+(function (PolicyTabPlacement) {
+    PolicyTabPlacement[PolicyTabPlacement["NONE"] = 0] = "NONE";
+    PolicyTabPlacement[PolicyTabPlacement["OVERVIEW"] = 1] = "OVERVIEW";
+    PolicyTabPlacement[PolicyTabPlacement["POLICIES"] = 2] = "POLICIES";
+    PolicyTabPlacement[PolicyTabPlacement["CRISIS"] = 3] = "CRISIS";
+})(PolicyTabPlacement || (PolicyTabPlacement = {}));
 class PoliciesModel {
     get activePolicies() {
         return this._activePolicies ?? [];
@@ -35,6 +42,12 @@ class PoliciesModel {
     get numCrisisSlots() {
         return this._numCrisisSlots;
     }
+    get activeTab() {
+        return this._activeTab;
+    }
+    set activeTab(activeTab) {
+        this._activeTab = activeTab;
+    }
     constructor() {
         this._myGovernment = null;
         this._activePolicies = [];
@@ -46,6 +59,7 @@ class PoliciesModel {
         this._numSlots = 0;
         this._numNormalSlots = 0;
         this._numCrisisSlots = 0;
+        this._activeTab = PolicyTabPlacement.NONE;
         this.policyHotkeyListener = this.onPolicyHotkey.bind(this);
         window.addEventListener('hotkey-open-traditions', this.policyHotkeyListener);
     }
