@@ -231,7 +231,7 @@ export class bzSubSystemDock {
         }
         // update progress meter & turn counter
         this.govButton.setAttribute("data-tooltip-content", tooltip.join('[n]'));
-        this.component.updateTurnCounter(this.govTurnCounter, turnsLeft.toString());
+        this.component.updateProgressLabel(this.govTurnCounter, turnsLeft.toString());
         this.govRing.setAttribute('value', (progress * 100).toString());
     }
     updateResourcesButton() {
