@@ -19,6 +19,7 @@ export default [
                 Configuration: "readonly",
                 Constructibles: "readonly",
                 Controls: "readonly",
+                CultureSlotTypes: "readonly",
                 CustomEvent: "readonly",
                 Game: "readonly",
                 GameContext: "readonly",

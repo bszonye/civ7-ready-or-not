@@ -183,7 +183,11 @@ export class bzSubSystemDock {
         if (!player) return;  // autoplaying
         const isCelebration = player.Happiness?.isInGoldenAge() ?? false;
         this.govRing.classList.toggle('bz-celebration', isCelebration);
-        const isReady = player.Culture?.canSwapNormalTraditions ?? false;
+        const isReady = player.Culture && (
+            player.Culture.canSwapCultureSlot(CultureSlotTypes.POLICY_CULTURE_SLOT) ||
+            player.Culture.canSwapCultureSlot(CultureSlotTypes.TRADITION_CULTURE_SLOT) ||
+            player.Culture.canSwapCultureSlot(CultureSlotTypes.CRISIS_CULTURE_SLOT)
+        );
         this.govButton.classList.toggle('bz-ready', isReady);
         const ginfo = getGoldenAgeInfo(player);
         const hyield = player.Stats.getNetYield(YieldTypes.YIELD_HAPPINESS) ?? 0;
