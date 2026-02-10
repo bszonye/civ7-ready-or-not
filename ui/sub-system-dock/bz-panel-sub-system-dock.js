@@ -12,14 +12,17 @@ const BZ_HEAD_STYLE = [
     height: 3rem;
 }
 .resources.bz-ready .ssb__button-icon {
-    background-image: url('blp:ntf_discover_resource_blk');
+    background-image: url("blp:ntf_discover_resource_blk");
 }
 .bz-gov {
     isolation: isolate;
 }
 .bz-gov.bz-ready .ssb__button-icon {
-    background-image: url('blp:ntf_tradition_slot_unlocked_blk');
+    background-image: url("blp:ntf_tradition_slot_unlocked_blk");
     z-index: 1;
+}
+.bz-gov.bz-ready.bz-crisis-ready .ssb__button-icon {
+    background-image: url("blp:ntf_crisis_blk");
 }
 .ssb__element.bz-gov {
     margin: 0.3333333333rem;
@@ -73,7 +76,7 @@ const BZ_HEAD_STYLE = [
 `,
 ];
 BZ_HEAD_STYLE.forEach((style) => {
-    const e = document.createElement('style');
+    const e = document.createElement("style");
     e.textContent = style;
     document.head.appendChild(e);
 });
@@ -125,7 +128,7 @@ export class bzSubSystemDock {
             callback: this.component.onOpenPolicies.bind(this.component),
             class: ["ring-gov", "tut-traditions"],
             ringClass: "ssb__texture-ring",
-            modifierClass: 'bz-gov',
+            modifierClass: "bz-gov",
             audio: "government",
             focusedAudio: "data-audio-focus-small"
         });
@@ -142,10 +145,10 @@ export class bzSubSystemDock {
         this.updateGovButton();
         this.updateResourcesButton();
         // refresh buttons when activated, to catch missed events
-        this.govButton.addEventListener('action-activate', (_event) => {
+        this.govButton.addEventListener("action-activate", (_event) => {
             this.updateGovButton();
         });
-        this.resourcesButton.addEventListener('action-activate', (_event) => {
+        this.resourcesButton.addEventListener("action-activate", (_event) => {
             this.updateResourcesButton();
         });
     }
@@ -182,9 +185,24 @@ export class bzSubSystemDock {
         const player = Players.get(GameContext.localPlayerID);
         if (!player) return;  // autoplaying
         const isCelebration = player.Happiness?.isInGoldenAge() ?? false;
-        this.govRing.classList.toggle('bz-celebration', isCelebration);
-        const isReady = player.Culture?.canSwapNormalTraditions ?? false;
-        this.govButton.classList.toggle('bz-ready', isReady);
+        this.govRing.classList.toggle("bz-celebration", isCelebration);
+        const isSlotTypeReady = (type) => {
+            const c = player.Culture;
+            if (!c) return false;
+            if (!c.canSwapCultureSlot(type)) return false;  // locked
+            if (!c.getNumCultureSlots(type)) return false;  // no slots
+            const n = c.getUnlockedTraditions(type).length + (
+                type == CultureSlotTypes.TRADITION_CULTURE_SLOT ?
+                c.getUnlockedTraditions(CultureSlotTypes.POLICY_CULTURE_SLOT).length : 0
+            );
+            return n != 0;  // number of unlocked matching policies
+        };
+        const isReady =
+            isSlotTypeReady(CultureSlotTypes.POLICY_CULTURE_SLOT) ||
+            isSlotTypeReady(CultureSlotTypes.TRADITION_CULTURE_SLOT);
+        const isCrisisReady = isSlotTypeReady(CultureSlotTypes.CRISIS_CULTURE_SLOT);
+        this.govButton.classList.toggle("bz-ready", isReady || isCrisisReady);
+        this.govButton.classList.toggle("bz-crisis-ready", isCrisisReady);
         const ginfo = getGoldenAgeInfo(player);
         const hyield = player.Stats.getNetYield(YieldTypes.YIELD_HAPPINESS) ?? 0;
         const htotal = player.Stats.getLifetimeYield(YieldTypes.YIELD_HAPPINESS) ?? 0;
@@ -230,26 +248,26 @@ export class bzSubSystemDock {
             tooltip.splice(1, 0, bold(swap));
         }
         // update progress meter & turn counter
-        this.govButton.setAttribute("data-tooltip-content", tooltip.join('[n]'));
+        this.govButton.setAttribute("data-tooltip-content", tooltip.join("[n]"));
         this.component.updateProgressLabel(this.govTurnCounter, turnsLeft.toString());
-        this.govRing.setAttribute('value', (progress * 100).toString());
+        this.govRing.setAttribute("value", (progress * 100).toString());
     }
     updateResourcesButton() {
         if (!this.resourcesButton) return;  // not ready yet
         const player = Players.get(GameContext.localPlayerID);
         if (!player) return;  // autoplaying
         const isReady = !(player.Resources?.isRessourceAssignmentLocked() ?? true);
-        this.resourcesButton.classList.toggle('bz-ready', isReady);
+        this.resourcesButton.classList.toggle("bz-ready", isReady);
     }
     beforeAttach() { }
     afterAttach() {
-        this.Root.listenForEngineEvent('CityInitialized', this.cityInitializedListener);
-        this.Root.listenForEngineEvent('TradeRouteAddedToMap', this.tradeRouteListener);
-        this.Root.listenForEngineEvent('TradeRouteRemovedFromMap', this.tradeRouteListener);
-        this.Root.listenForEngineEvent('TradeRouteChanged', this.tradeRouteListener);
-        this.Root.listenForEngineEvent('TraditionChanged', this.onPolicyChanged, this);
-        this.Root.listenForEngineEvent('CultureNodeCompleted', this.onCivicCompleted, this);
-        this.Root.listenForEngineEvent('TraditionSlotsAdded', this.onPolicySlotsAdded, this);
+        this.Root.listenForEngineEvent("CityInitialized", this.cityInitializedListener);
+        this.Root.listenForEngineEvent("TradeRouteAddedToMap", this.tradeRouteListener);
+        this.Root.listenForEngineEvent("TradeRouteRemovedFromMap", this.tradeRouteListener);
+        this.Root.listenForEngineEvent("TradeRouteChanged", this.tradeRouteListener);
+        this.Root.listenForEngineEvent("TraditionChanged", this.onPolicyChanged, this);
+        this.Root.listenForEngineEvent("CultureNodeCompleted", this.onCivicCompleted, this);
+        this.Root.listenForEngineEvent("TraditionSlotsAdded", this.onPolicySlotsAdded, this);
     }
     beforeDetach() { }
     afterDetach() { }
@@ -279,4 +297,4 @@ export class bzSubSystemDock {
         this.updateGovButton();
     }
 }
-Controls.decorate('panel-sub-system-dock', (component) => new bzSubSystemDock(component));
+Controls.decorate("panel-sub-system-dock", (component) => new bzSubSystemDock(component));
