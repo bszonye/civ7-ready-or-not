@@ -106,19 +106,19 @@ export function getGoldenAgeInfo(player) {
 class bzScreenPolicies {
     constructor(component) {
         this.component = component;
-        component.bzComponent = this;
     }
     beforeAttach() { }
     afterAttach() {
         // get the icon for the current celebration, if any
-        const ginfo = getGoldenAgeInfo(this.component.localPlayer);
-        const gicon = this.component.overviewWindow
+        const player = Players.get(GameContext.localPlayerID);
+        const ginfo = getGoldenAgeInfo(player);
+        const gicon = this.component.Root
             .querySelector(".policies__overview-happiness-meter-image");
         gicon.style.backgroundImage = ginfo.current ?
-            UI.getIconCSS(ginfo.current.GoldenAgeType) : 'url("celeb_happiness_icon")';
+            UI.getIconCSS(ginfo.current.GoldenAgeType) : "url('celeb_happiness_icon')";
     }
     beforeDetach() { }
     afterDetach() { }
     onAttributeChanged(_name, _prev, _next) { }
 }
-Controls.decorate('screen-policies', (component) => new bzScreenPolicies(component));
+Controls.decorate("screen-policies", (component) => new bzScreenPolicies(component));
