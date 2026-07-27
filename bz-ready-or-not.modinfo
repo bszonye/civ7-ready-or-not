@@ -9,6 +9,9 @@
         <URL>https://forums.civfanatics.com/resources/ready-or-not.32175/</URL>
         <Package>Mod</Package>
         <AffectsSavedGames>0</AffectsSavedGames>
+        <!-- <bzIcon>blp:ntf_discover_resource_blk</bzIcon> -->
+        <bzIcon>blp:ntf_tradition_slot_unlocked_blk</bzIcon>
+        <bzIconGlow>#00a717</bzIconGlow>
     </Properties>
     <Dependencies>
         <Mod id="base-standard" title="LOC_MODULE_BASE_STANDARD_NAME" />
