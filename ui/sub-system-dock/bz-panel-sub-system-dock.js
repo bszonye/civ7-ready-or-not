@@ -82,10 +82,10 @@ BZ_HEAD_STYLE.forEach((style) => {
 });
 
 export class bzSubSystemDock {
-    static c_prototype;
+    static c;
     constructor(component) {
         this.component = component;
-        component.bzComponent = this;
+        this.component.bzReadyOrNot = this;
         this.Root = this.component.Root;
         this.buttonContainer = null;
         this.policiesButton = null;
@@ -95,28 +95,25 @@ export class bzSubSystemDock {
         this.govCrown = null;
         this.cityInitializedListener = this.onCityInitialized.bind(this);
         this.tradeRouteListener = this.onTradeRouteUpdates.bind(this);
-        this.patchPrototypes(this.component);
+        this.patchPrototype(Object.getPrototypeOf(component));
     }
-    patchPrototypes(component) {
-        const c_prototype = Object.getPrototypeOf(component);
-        if (bzSubSystemDock.c_prototype == c_prototype) return;
-        // patch component methods
-        const proto = bzSubSystemDock.c_prototype = c_prototype;
+    patchPrototype(proto) {
+        if (bzSubSystemDock.c) return;  // one-time initialization
+        // patch SubSystemDock methods & properties
+        const c = bzSubSystemDock.c = { proto };
         // afterInitialize
-        const afterInitialize = this.afterInitialize;
-        const onInitialize = proto.onInitialize;
-        proto.onInitialize = function(...args) {
-            const c_rv = onInitialize.apply(this, args);
-            const after_rv = afterInitialize.apply(this.bzComponent, args);
-            return after_rv ?? c_rv;
+        c.onInitialize = c.proto.onInitialize;
+        c.proto.onInitialize = function(...args) {
+            const crv = c.onInitialize.apply(this, args);
+            const arv = this.bzReadyOrNot.afterInitialize(...args);
+            return arv ?? crv;
         }
         // afterUpdateButtonTimers
-        const afterUpdateButtonTimers = this.afterUpdateButtonTimers;
-        const updateButtonTimers = proto.updateButtonTimers;
-        proto.updateButtonTimers = function(...args) {
-            const c_rv = updateButtonTimers.apply(this, args);
-            const after_rv = afterUpdateButtonTimers.apply(this.bzComponent, args);
-            return after_rv ?? c_rv;
+        c.updateButtonTimers = c.proto.updateButtonTimers;
+        c.proto.updateButtonTimers = function(...args) {
+            const crv = c.updateButtonTimers.apply(this, args);
+            const arv = this.bzReadyOrNot.afterUpdateButtonTimers(...args);
+            return arv ?? crv;
         }
     }
     afterInitialize() {
