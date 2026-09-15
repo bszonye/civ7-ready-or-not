@@ -253,7 +253,7 @@ export class bzSubSystemDock {
         if (!this.resourcesButton) return;  // not ready yet
         const player = Players.get(GameContext.localPlayerID);
         if (!player) return;  // autoplaying
-        const isReady = !(player.Resources?.isRessourceAssignmentLocked() ?? true);
+        const isReady = !(player.Resources?.isResourceAssignmentLocked() ?? true);
         this.resourcesButton.classList.toggle("bz-ready", isReady);
     }
     beforeAttach() { }
