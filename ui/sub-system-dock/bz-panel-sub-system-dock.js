@@ -165,6 +165,9 @@ export class bzSubSystemDock {
             ring: this.component.createRing(buttonData),
             turnCounter,
         };
+        ringAndButton.button.setAttribute("data-audio-group-ref", "audio-panel-sub-system-dock");
+        ringAndButton.button.setAttribute("data-audio-press-ref", "data-audio-press-large");
+        ringAndButton.button.setAttribute("data-audio-activate-ref", "none");
         ringAndButton.ring.appendChild(ringAndButton.button);
         ringAndButton.ring.appendChild(ringAndButton.turnCounter);
         if (buttonData.ringClass) {
